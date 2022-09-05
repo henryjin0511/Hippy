@@ -63,7 +63,7 @@ class _ListViewWidgetState extends FRState<ListViewWidget> {
                   viewModel.hasRemovePreDraw = true;
                   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                     widget._viewModel.sendEvent(
-                      'initialListReady',
+                      'initiallistready',
                       VoltronMap(),
                     );
                   });

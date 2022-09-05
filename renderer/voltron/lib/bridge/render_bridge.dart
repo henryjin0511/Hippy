@@ -136,7 +136,13 @@ class VoltronRenderBridgeManager implements Destroyable {
     if (!_isBridgeInit) {
       return false;
     }
-    await VoltronRenderApi.callNativeEvent(_context.renderManager.getNativeId(), rootId, id, event, params);
+    var convertParams = params;
+    if (params is VoltronMap) {
+      convertParams = params.toMap();
+    } else if (params is VoltronArray) {
+      convertParams = params.toList();
+    }
+    await VoltronRenderApi.callNativeEvent(_context.renderManager.getNativeId(), rootId, id, event, convertParams);
   }
 
   @override

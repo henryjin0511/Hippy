@@ -593,8 +593,11 @@ class TextInputDispatcher {
         var paramsMap = VoltronMap();
         paramsMap.push("text", text);
         if (hasFocus) {
-          context.eventHandler
-              .receiveUIComponentEvent(id, "onFocus", paramsMap);
+          context.eventHandler.receiveUIComponentEvent(
+            id,
+            "onFocus",
+            paramsMap,
+          );
         } else {
           context.eventHandler.receiveUIComponentEvent(id, "onBlur", paramsMap);
         }

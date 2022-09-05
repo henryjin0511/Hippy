@@ -103,7 +103,12 @@ abstract class VoltronViewController<T extends RenderViewModel, R extends Render
 
   @ControllerProps(NodeProps.kDisplay)
   void setDisplay(T viewModel, String display) {
-    viewModel.display = display;
+    if (viewModel.display != display) {
+      // viewModel.setProperty('display', display);
+      viewModel.display = display;
+      // viewModel.isDirty = true;
+    }
+
   }
 
   @ControllerProps(NodeProps.kTransform)

@@ -32,8 +32,8 @@ class ListPullHeaderViewController extends BaseGroupController<ListPullHeaderVie
   static const String collapsePullHeader = "collapsePullHeader";
   static const String expandPullHeader = "expandPullHeader";
 
-  static const String onHeaderReleased = 'onHeaderReleased';
-  static const String onHeaderPulling = 'onHeaderPulling';
+  static const String onHeaderReleased = 'headerReleased';
+  static const String onHeaderPulling = 'headerPulling';
 
   @override
   ListPullHeaderViewModel createRenderViewModel(RenderNode node, RenderContext context) {

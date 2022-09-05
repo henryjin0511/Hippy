@@ -19,6 +19,7 @@
 //
 
 import 'package:flutter/material.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:gradient_like_css/gradient_like_css.dart';
 
@@ -35,8 +36,22 @@ int _kRenderModelInstanceId = 1;
 
 class RenderViewModel extends ChangeNotifier {
   ContextWrapper? _wrapper;
+  bool _dirty = false;
 
-  String display = '';
+  String _display = '';
+
+  String get display {
+    return _display;
+  }
+
+  set display(String v) {
+    _display = v;
+    _dirty = true;
+  }
+
+  setProperty (String key, ) {
+
+  }
 
   double? _x;
   double? _y;
@@ -154,7 +169,8 @@ class RenderViewModel extends ChangeNotifier {
 
   double? get height => _height;
 
-  bool get noPosition => _x == null || _y == null || _x == double.nan || _y == double.nan;
+  bool get noPosition =>
+      _x == null || _y == null || _x == double.nan || _y == double.nan;
 
   bool get noSize =>
       _width == null ||
@@ -265,10 +281,14 @@ class RenderViewModel extends ChangeNotifier {
       var layoutW = other.width;
       var h = height;
       var layoutH = other.height;
-      var xEqual = x == layoutX || (x != null && x.isNaN && layoutX != null && layoutX.isNaN);
-      var yEqual = y == layoutY || (y != null && y.isNaN && layoutY != null && layoutY.isNaN);
-      var wEqual = w == layoutW || (w != null && w.isNaN && layoutW != null && layoutW.isNaN);
-      var hEqual = h == layoutH || (h != null && h.isNaN && layoutH != null && layoutH.isNaN);
+      var xEqual = x == layoutX ||
+          (x != null && x.isNaN && layoutX != null && layoutX.isNaN);
+      var yEqual = y == layoutY ||
+          (y != null && y.isNaN && layoutY != null && layoutY.isNaN);
+      var wEqual = w == layoutW ||
+          (w != null && w.isNaN && layoutW != null && layoutW.isNaN);
+      var hEqual = h == layoutH ||
+          (h != null && h.isNaN && layoutH != null && layoutH.isNaN);
       sizeEqual = xEqual && yEqual && wEqual && hEqual;
     }
 
@@ -388,7 +408,8 @@ class RenderViewModel extends ChangeNotifier {
   }
 
   NativeGestureDispatcher createDispatcher() {
-    return NativeGestureDispatcher(rootId: rootId, id: id, context: _renderContext);
+    return NativeGestureDispatcher(
+        rootId: rootId, id: id, context: _renderContext);
   }
 
   void updateLayout(double x, double y, double width, double height) {
@@ -641,7 +662,8 @@ class RenderViewModel extends ChangeNotifier {
       var angle = linearGradientMap.get<String>("angle");
       var colorStopList = linearGradientMap.get<VoltronArray>("colorStopList");
       if (angle != null && colorStopList != null) {
-        return GradientUtil.generateHippyLinearGradient(w, h, angle, colorStopList);
+        return GradientUtil.generateHippyLinearGradient(
+            w, h, angle, colorStopList);
       }
     }
     return null;
@@ -702,8 +724,10 @@ class RenderViewModel extends ChangeNotifier {
       // hippy box-shadow
       result.add(
         BoxShadow(
-          color: Color(localBoxShadowColor).withOpacity(localBoxShadowOpacity ?? 1),
-          offset: Offset(localBoxShadowOffsetX ?? 0, localBoxShadowOffsetY ?? 0),
+          color: Color(localBoxShadowColor)
+              .withOpacity(localBoxShadowOpacity ?? 1),
+          offset:
+              Offset(localBoxShadowOffsetX ?? 0, localBoxShadowOffsetY ?? 0),
           blurRadius: localBoxShadowRadius,
           spreadRadius: localBoxShadowSpread ?? 0.0,
         ),
@@ -766,7 +790,13 @@ class RenderViewModel extends ChangeNotifier {
     var bgImg = backgroundImage;
     if (bgImg is! String || bgImg == '') return null;
     var imgFit = resizeModeToBoxFit(backgroundImgSize);
-    const alignMap = {'left': -1.0, 'center': 0.0, 'right': 1.0, 'top': -1.0, 'bottom': 1.0};
+    const alignMap = {
+      'left': -1.0,
+      'center': 0.0,
+      'right': 1.0,
+      'top': -1.0,
+      'bottom': 1.0
+    };
     var alignX = alignMap[backgroundPositionX] ?? -1.0;
     var alignY = alignMap[backgroundPositionY] ?? -1.0;
     var alignment = Alignment(alignX, alignY);
@@ -844,7 +874,8 @@ class RenderViewModel extends ChangeNotifier {
 
   bool get isOverflowClip {
     var radius = getBorderRadius();
-    var isOverflowHidden = overflow == enumValueToString(ContainOverflow.hidden);
+    var isOverflowHidden =
+        overflow == enumValueToString(ContainOverflow.hidden);
     var isOverflowScroll = this is ScrollViewRenderViewModel;
     return (isOverflowHidden || isOverflowScroll) && radius != null;
   }
@@ -906,7 +937,9 @@ class TransformOrigin {
 
   @override
   bool operator ==(Object other) {
-    return other is TransformOrigin && offset == other.offset && alignment == other.alignment;
+    return other is TransformOrigin &&
+        offset == other.offset &&
+        alignment == other.alignment;
   }
 
   @override
