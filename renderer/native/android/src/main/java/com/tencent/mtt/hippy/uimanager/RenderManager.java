@@ -18,6 +18,7 @@ package com.tencent.mtt.hippy.uimanager;
 
 import static com.tencent.mtt.hippy.uimanager.RenderNode.FLAG_ALREADY_DELETED;
 import static com.tencent.mtt.hippy.uimanager.RenderNode.FLAG_LAZY_LOAD;
+import static com.tencent.mtt.hippy.uimanager.RenderNode.FLAG_UPDATE_TOTAL_PROPS;
 
 import android.content.Context;
 import android.view.View;
@@ -28,12 +29,12 @@ import com.tencent.renderer.NativeRenderContext;
 import com.tencent.renderer.NativeRendererManager;
 import com.tencent.renderer.RenderRootNode;
 import com.tencent.renderer.component.text.VirtualNode;
+import com.tencent.renderer.pool.NativeRenderPool.PoolType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import android.text.TextUtils;
-import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import com.tencent.mtt.hippy.dom.node.NodeProps;
@@ -90,6 +91,9 @@ public class RenderManager {
     public void preCreateView(int rootId, int id, int pid, @NonNull String className,
             @Nullable Map<String, Object> props) {
         boolean isLazy = mControllerManager.checkLazy(className);
+        if (isLazy) {
+            return;
+        }
         if (pid != rootId) {
             View view = mControllerManager.getPreView(rootId, pid);
             if (view == null) {
@@ -116,6 +120,9 @@ public class RenderManager {
             LogUtils.w(TAG, "createNode: node == null");
             return;
         }
+        // New created node should use total props, therefore set this flag for
+        // update node not need to diff props in this batch cycle.
+        node.setNodeFlag(FLAG_UPDATE_TOTAL_PROPS);
         rootNode.addRenderNode(node);
         parentNode.addChild(node, index);
         addUpdateNodeIfNeeded(rootId, parentNode);
@@ -152,7 +159,7 @@ public class RenderManager {
     public void updateNode(int rootId, int nodeId, Map<String, Object> props) {
         RenderNode node = getRenderNode(rootId, nodeId);
         if (node != null) {
-            node.updateProps(props);
+            node.checkPropsDifference(props);
             addUpdateNodeIfNeeded(rootId, node);
         }
     }
@@ -217,14 +224,14 @@ public class RenderManager {
         // Should create all views at first
         for (RenderNode node : updateNodes) {
             node.batchStart();
-            node.createView();
+            node.prepareHostView(false, PoolType.PRE_CREATE_VIEW);
         }
         // Should do update after all views created
         for (RenderNode node : updateNodes) {
-            node.updateView();
+            node.mountHostView();
             node.batchComplete();
         }
-        mControllerManager.onBatchEnd();
+        mControllerManager.onBatchEnd(rootId);
         updateNodes.clear();
     }
 
@@ -254,7 +261,7 @@ public class RenderManager {
     }
 
     @Nullable
-    public RenderNode getRenderNode(@NonNull View view) {
+    public static RenderNode getRenderNode(@NonNull View view) {
         Context context = view.getContext();
         if (!(context instanceof NativeRenderContext)) {
             return null;
@@ -264,7 +271,7 @@ public class RenderManager {
     }
 
     @Nullable
-    public RenderNode getRenderNode(int rootId, int id) {
+    public static RenderNode getRenderNode(int rootId, int id) {
         RenderRootNode rootNode = NativeRendererManager.getRootNode(rootId);
         if (rootId == id) {
             return rootNode;
@@ -281,10 +288,6 @@ public class RenderManager {
             return node.checkRegisteredEvent(eventName);
         }
         return false;
-    }
-
-    public void replaceID(int rootId, int oldId, int newId) {
-        mControllerManager.replaceId(rootId, oldId, newId);
     }
 
     public void postInvalidateDelayed(int rootId, int id, long delayMilliseconds) {

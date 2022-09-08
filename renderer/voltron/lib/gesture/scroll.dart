@@ -28,6 +28,10 @@ import '../viewmodel.dart';
 import 'dispatcher.dart';
 
 class NativeScrollGestureDispatcher extends NativeGestureDispatcher {
+  late int _id;
+  late int _rootId;
+  late RenderContext _context;
+
   bool scrollBeginDragEventEnable = false;
   bool scrollEndDragEventEnable = false;
   bool momentumScrollBeginEventEnable = false;
@@ -44,7 +48,11 @@ class NativeScrollGestureDispatcher extends NativeGestureDispatcher {
     required int rootId,
     required int id,
     required RenderContext context,
-  }) : super(rootId: rootId, id: id, context: context);
+  }) : super(rootId: rootId, id: id, context: context) {
+    _id = id;
+    _rootId = rootId;
+    _context = context;
+  }
 
   @override
   bool get enableScroll => scrollEnable;
@@ -70,17 +78,24 @@ class NativeScrollGestureDispatcher extends NativeGestureDispatcher {
     }
   }
 
-  void handleScrollMomentumBegin(RenderViewModel view, double scrollX, double scrollY) {
+  void handleScrollMomentumBegin(
+      RenderViewModel view, double scrollX, double scrollY) {
     if (momentumScrollBeginEventEnable) {
       _ScrollEventHelper.emitScrollMomentumBeginEvent(view, scrollX, scrollY);
     }
   }
 
   void handleScrollReachedEnd(RenderViewModel view) {
-    view.context.eventHandler.receiveUIComponentEvent(view.id, "onEndReached", null);
+    view.context.bridgeManager.execNativeEvent(
+      _rootId,
+      view.id,
+      "endreached",
+      {},
+    );
   }
 
-  void handleScrollMomentumEnd(RenderViewModel view, double scrollX, double scrollY) {
+  void handleScrollMomentumEnd(
+      RenderViewModel view, double scrollX, double scrollY) {
     if (momentumScrollEndEventEnable) {
       _ScrollEventHelper.emitScrollMomentumEndEvent(view, scrollX, scrollY);
     }
@@ -103,7 +118,8 @@ class NativeScrollGestureDispatcher extends NativeGestureDispatcher {
   }
 
   void sendExposureEvent(RenderViewModel viewModel, String eventName) {
-    viewModel.context.eventHandler.receiveUIComponentEvent(viewModel.id, eventName, null);
+    viewModel.context.eventHandler
+        .receiveUIComponentEvent(viewModel.id, eventName, null);
   }
 }
 
@@ -114,28 +130,33 @@ class _ScrollEventHelper {
   static const String kEventTypeMomentumBegin = "onMomentumScrollBegin";
   static const String kEventTypeMomentumEnd = "onMomentumScrollEnd";
 
-  static void emitScrollEvent(RenderViewModel view, double scrollX, double scrollY) {
+  static void emitScrollEvent(
+      RenderViewModel view, double scrollX, double scrollY) {
     _doEmitScrollEvent(view, kEventTypeScroll, scrollX, scrollY);
   }
 
-  static void emitScrollBeginDragEvent(RenderViewModel view, double scrollX, double scrollY) {
+  static void emitScrollBeginDragEvent(
+      RenderViewModel view, double scrollX, double scrollY) {
     _doEmitScrollEvent(view, kEventTypeBeginDrag, scrollX, scrollY);
   }
 
-  static void emitScrollEndDragEvent(RenderViewModel view, double scrollX, double scrollY) {
+  static void emitScrollEndDragEvent(
+      RenderViewModel view, double scrollX, double scrollY) {
     _doEmitScrollEvent(view, kEventTypeEndDrag, scrollX, scrollY);
   }
 
-  static void emitScrollMomentumBeginEvent(RenderViewModel view, double scrollX, double scrollY) {
+  static void emitScrollMomentumBeginEvent(
+      RenderViewModel view, double scrollX, double scrollY) {
     _doEmitScrollEvent(view, kEventTypeMomentumBegin, scrollX, scrollY);
   }
 
-  static void emitScrollMomentumEndEvent(RenderViewModel view, double scrollX, double scrollY) {
+  static void emitScrollMomentumEndEvent(
+      RenderViewModel view, double scrollX, double scrollY) {
     _doEmitScrollEvent(view, kEventTypeMomentumEnd, scrollX, scrollY);
   }
 
-  static void _doEmitScrollEvent(
-      RenderViewModel view, String scrollEventType, double scrollX, double scrollY) {
+  static void _doEmitScrollEvent(RenderViewModel view, String scrollEventType,
+      double scrollX, double scrollY) {
     var contentInset = {};
     contentInset["top"] = 0;
     contentInset["bottom"] = 0;

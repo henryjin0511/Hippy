@@ -232,7 +232,9 @@ class RenderNode extends StyleNode {
     if (_deleteIds.isNotEmpty) {
       for (final deleteId in _deleteIds) {
         _controllerManager.deleteChild(
-            _viewModel, _viewModel?.childFromId(deleteId));
+          _viewModel,
+          _viewModel?.childFromId(deleteId),
+        );
       }
       _deleteIds.clear();
       _notifyManageChildren = true;
@@ -379,11 +381,13 @@ class RenderNode extends StyleNode {
       _viewModel?.sortChildren();
 
       LogUtils.dRenderNode(
-          "($hashCode) Id:$id start update layout:$_hasUpdateLayout");
+        "($hashCode) Id:$id start update layout:$_hasUpdateLayout",
+      );
       if (_hasUpdateLayout && !isRoot) {
         _controllerManager.updateLayout(this);
         LogUtils.dRenderNode(
-            "($hashCode) Id:$id end update layout:[$layoutX, $layoutY, $_width, $_height]");
+          "($hashCode) Id:$id end update layout:[$layoutX, $layoutY, $_width, $_height]",
+        );
         _hasUpdateLayout = false;
       }
 
@@ -402,15 +406,17 @@ class RenderNode extends StyleNode {
         for (var i = 0; i < _uiFunction.length; i++) {
           var uiFunction = _uiFunction[i];
           _controllerManager.dispatchUIFunction(
-              rootId,
-              id,
-              name,
-              uiFunction._functionName,
-              uiFunction._params,
-              uiFunction._promise);
+            rootId,
+            id,
+            name,
+            uiFunction._functionName,
+            uiFunction._params,
+            uiFunction._promise,
+          );
         }
         _uiFunction.clear();
       }
+
       if (_notifyManageChildren) {
         manageChildrenComplete();
         _notifyManageChildren = false;
@@ -480,7 +486,10 @@ class RenderNode extends StyleNode {
   }
 
   void dispatchUIFunction(
-      String funcName, VoltronArray array, Promise promise) {
+    String funcName,
+    VoltronArray array,
+    Promise promise,
+  ) {
     _uiFunction.add(UIFunction(funcName, array, promise));
   }
 

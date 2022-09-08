@@ -521,7 +521,7 @@ class RenderManager
   void doRenderBatch() {
     LogUtils.d(_kTag, "do batch size: ${_uiUpdateNodes.length}");
     _updateRenderNodes.addAll(_uiUpdateNodes);
-    _updateRenderNodes.addAll(_nullUiUpdateNodes);
+    // _updateRenderNodes.addAll(_nullUiUpdateNodes);
 
     for (var renderNode in _uiUpdateNodes) {
       renderNode.createViewModel();

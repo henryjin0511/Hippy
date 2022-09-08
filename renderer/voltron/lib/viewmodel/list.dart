@@ -233,7 +233,7 @@ class ListViewModel extends ScrollableModel {
   }
 
   void sendEvent(String eventName, VoltronMap params) {
-    context.eventHandler.receiveUIComponentEvent(id, eventName, params);
+    context.bridgeManager.execNativeEvent(rootId, id, eventName, params);
   }
 }
 
