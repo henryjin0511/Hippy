@@ -3,7 +3,7 @@ import {
   StyleSheet,
   View,
   Text,
-} from '@hippy/react';
+  UIManagerModule, callNative, callNativeWithPromise } from '@hippy/react';
 import HomeEntry from './pages/entry';
 import RemoteDebug from './pages/remote-debug';
 import SafeAreaView from './shared/SafeAreaView';
@@ -37,13 +37,35 @@ const styles = StyleSheet.create({
 export default class App extends Component {
   constructor(props) {
     super(props);
+    this.myRef = React.createRef();
     this.state = ({
       pageIndex: 0,
+      qrText: 'https://qq.com',
     });
+    // this.changeQrText = this.changeQrText.bind(this);
+  }
+
+  changeQrText = () => {
+    // debugger;
+    // this.setState({
+    //   qrText: 'https://hippyjs.org'
+    // })
+    // debugger;
+    // this.myRef.changeText('https://hippyjs.org')
+    // UIManagerModule.callUIFunction(this.myRef, 'changeText', ['https://hippyjs.org']);
+    callNative('TestModule', 'log', '123');
+    callNative('TestModule', 'helloNative', '456');
+    callNativeWithPromise('TestModule', 'helloNativeWithPromise', 'event')
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   render() {
-    const { pageIndex } = this.state;
+    const { pageIndex, qrText } = this.state;
     const { __instanceId__: instanceId } = this.props;
 
     const renderPage = () => {
@@ -79,6 +101,18 @@ export default class App extends Component {
 
     return (
       <SafeAreaView statusBarColor="#4c9afa">
+        <div
+          ref={(ref) => {
+            this.myRef = ref;
+          }}
+          style={{
+            width: 300,
+            height: 300,
+          }}
+          nativeName="QrView"               // **必须：**将前端组件与终端组件进行绑定
+          text={qrText}
+          onClick={this.changeQrText}
+        ></div>
         {renderPage()}
         <View style={styles.buttonContainer}>
           {renderButton()}
