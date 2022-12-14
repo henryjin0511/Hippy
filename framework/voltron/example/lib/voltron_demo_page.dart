@@ -31,8 +31,8 @@ class VoltronDemoPage extends StatefulWidget {
 }
 
 class _VoltronDemoPageState extends State<VoltronDemoPage> {
-  late VoltronJSLoaderManager _loaderManager;
-  late VoltronJSLoader _jsLoader;
+  late VoltronLoaderManager _loaderManager;
+  late VoltronLoader _jsLoader;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _VoltronDemoPageState extends State<VoltronDemoPage> {
     initParams.enableLog = true;
     initParams.coreJSAssetsPath = "assets/jsbundle/vendor.android.js";
     initParams.codeCacheTag = "common";
-    _loaderManager = VoltronJSLoaderManager.createLoaderManager(
+    _loaderManager = VoltronLoaderManager.createLoaderManager(
       initParams,
       (statusCode, msg) {
         LogUtils.i(

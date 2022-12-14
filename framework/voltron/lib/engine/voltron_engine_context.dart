@@ -22,6 +22,7 @@ import 'dart:collection';
 
 import 'package:voltron/adapter/resource_loader.dart';
 import 'package:voltron/devtools/devtools_manager.dart';
+import 'package:voltron_connector/voltron_connector.dart';
 import 'package:voltron_renderer/voltron_renderer.dart';
 import 'package:voltron_vfs/voltron_vfs.dart';
 
@@ -32,7 +33,7 @@ import '../inspector.dart';
 import '../module.dart';
 import 'js_dimension_checker.dart';
 
-class EngineContext with RenderContextProxy {
+class VoltronEngineContext with RenderContextProxy {
   final List<EngineLifecycleEventListener> _engineLifecycleEventListeners = [];
 
   // All CompoundView Instance Status Listener
@@ -56,6 +57,9 @@ class EngineContext with RenderContextProxy {
 
   // vfs manager
   late VfsManager _vfsManager;
+
+  // js driver
+  late JsDriver _jsDriver;
 
   final TimeMonitor _startTimeMonitor;
 
@@ -88,7 +92,9 @@ class EngineContext with RenderContextProxy {
 
   VfsManager get vfsManager => _vfsManager;
 
-  EngineContext(
+  JsDriver get jsDriver => _jsDriver;
+
+  VoltronEngineContext(
     List<APIProvider>? apiProviders,
     VoltronBundleLoader? coreLoader,
     int bridgeType,
@@ -110,6 +116,8 @@ class EngineContext with RenderContextProxy {
         _isDevMode = isDevModule,
         _debugServerHost = serverHost,
         _startTimeMonitor = monitor {
+    _initVfsManager();
+    _moduleManager = ModuleManager(this, apiProviders);
     _renderContext = JSRenderContext(
       this,
       _id,
@@ -126,6 +134,7 @@ class EngineContext with RenderContextProxy {
     }
     _moduleManager = ModuleManager(this, apiProviders);
     _dimensionChecker = JSDimensionChecker(globalConfigs.deviceAdapter, _moduleManager);
+    _jsDriver = JsDriver();
     _bridgeManager = VoltronBridgeManager(
       this,
       coreLoader,
@@ -135,8 +144,8 @@ class EngineContext with RenderContextProxy {
       bridgeType: bridgeType,
       isDevModule: _isDevMode,
       debugServerHost: _debugServerHost,
+      jsDriver: _jsDriver,
     );
-    _initVfsManager();
     _devSupportManager = devSupportManager;
   }
 
@@ -157,7 +166,8 @@ class EngineContext with RenderContextProxy {
 
   void _initVfsManager() {
     _vfsManager = VfsManager(_renderContext.workerManagerId);
-    DefaultProcessor processor = DefaultProcessor(VoltronResourceLoader(_globalConfigs.httpAdapter));
+    DefaultProcessor processor =
+        DefaultProcessor(VoltronResourceLoader(_globalConfigs.httpAdapter));
     _vfsManager.addProcessor(processor);
   }
 

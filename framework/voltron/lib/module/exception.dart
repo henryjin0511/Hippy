@@ -30,7 +30,7 @@ class ExceptionModule extends VoltronNativeModule {
   static const String kHandleExceptionBackgroundTracing =
       "handleBackgroundTracing";
 
-  ExceptionModule(EngineContext context) : super(context);
+  ExceptionModule(VoltronEngineContext context) : super(context);
 
   @override
   Map<String, Function> get extraFuncMap => {

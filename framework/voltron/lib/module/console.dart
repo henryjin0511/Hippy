@@ -31,7 +31,7 @@ class ConsoleModule extends VoltronNativeModule {
   static const String kConsoleInfo = "info";
   static const String kConsoleError = "error";
 
-  ConsoleModule(EngineContext context) : super(context);
+  ConsoleModule(VoltronEngineContext context) : super(context);
 
   @VoltronMethod(kConsoleLog)
   bool log(String message, JSPromise promise) {

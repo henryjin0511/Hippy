@@ -26,7 +26,7 @@ import 'module.dart';
 class EventDispatcher extends JavaScriptModule {
   static const String kModuleName = "EventDispatcher";
 
-  EventDispatcher(EngineContext context) : super(context);
+  EventDispatcher(VoltronEngineContext context) : super(context);
 
   @override
   void receiveNativeGesture(VoltronMap params) {

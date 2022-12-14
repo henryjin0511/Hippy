@@ -68,8 +68,8 @@ class BaseVoltronPage extends StatefulWidget {
 
 class _BaseVoltronPageState extends State<BaseVoltronPage> {
   PageStatus pageStatus = PageStatus.init;
-  late VoltronJSLoaderManager _loaderManager;
-  late VoltronJSLoader _jsLoader;
+  late VoltronLoaderManager _loaderManager;
+  late VoltronLoader _jsLoader;
   int errorCode = -1;
   late bool _debugMode;
   late String _coreBundle;
@@ -112,7 +112,7 @@ class _BaseVoltronPageState extends State<BaseVoltronPage> {
       MyAPIProvider(),
     ];
     initParams.engineMonitor = Monitor();
-    _loaderManager = VoltronJSLoaderManager.createLoaderManager(
+    _loaderManager = VoltronLoaderManager.createLoaderManager(
       initParams,
       (statusCode, msg) {
         LogUtils.i(

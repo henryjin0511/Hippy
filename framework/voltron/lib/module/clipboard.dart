@@ -33,7 +33,7 @@ class ClipboardModule extends VoltronNativeModule {
   static const String kGetStringMethodName = "getString";
   static const String kSetStringMethodName = "setString";
 
-  ClipboardModule(EngineContext context) : super(context);
+  ClipboardModule(VoltronEngineContext context) : super(context);
 
   @VoltronMethod(kGetStringMethodName)
   bool getString(JSPromise promise) {

@@ -26,13 +26,13 @@ import 'module.dart';
 import 'promise.dart';
 
 typedef TRequestWillBeSentHook = void Function(
-  EngineContext context,
+  VoltronEngineContext context,
   String requestId,
   VoltronHttpRequest request,
 );
 
 typedef TResponseReceivedHook = void Function(
-  EngineContext context,
+  VoltronEngineContext context,
   String requestId,
   VoltronHttpResponse? response,
 );
@@ -49,7 +49,7 @@ class NetworkModule extends VoltronNativeModule {
   /// 请求成功响应的钩子函数
   TResponseReceivedHook? responseReceivedHook;
 
-  NetworkModule(EngineContext context) : super(context);
+  NetworkModule(VoltronEngineContext context) : super(context);
 
   ///**
   /// * 发送请求

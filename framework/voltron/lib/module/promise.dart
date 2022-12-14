@@ -25,7 +25,7 @@ import '../engine.dart';
 class _JSPromiseImpl extends JSPromise {
   final String _moduleName;
   final String _moduleFunc;
-  final EngineContext _context;
+  final VoltronEngineContext _context;
 
   @override
   bool get hasCall => _hasCall;
@@ -55,7 +55,7 @@ abstract class JSPromise extends Promise {
 
   JSPromise(String callId) : super(callId);
 
-  factory JSPromise.js(EngineContext context,
+  factory JSPromise.js(VoltronEngineContext context,
       {required String module,
         required String method,
         required String callId}) =>

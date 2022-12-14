@@ -26,7 +26,7 @@ import 'package:voltron_renderer/util/log_util.dart';
 
 import '../adapter/http.dart';
 import '../bridge/voltron_api.dart';
-import '../engine/js_engine_context.dart';
+import '../engine/voltron_engine_context.dart';
 
 ///  network request and response inpsector
 class NetworkInspector {
@@ -99,7 +99,7 @@ class NetworkInspector {
 
   /// on network request response callback invoke with httpResponse
   /// more details, see https://chromedevtools.github.io/devtools-protocol/tot/Network/#event-responseReceived
-  void onResponseReceived(EngineContext context, String requestId, VoltronHttpResponse? httpResponse) {
+  void onResponseReceived(VoltronEngineContext context, String requestId, VoltronHttpResponse? httpResponse) {
     final responseHeader = httpResponse?.headerMap.map((key, value) => MapEntry(key, value.join(';'))) ?? {};
     final requestHeader = httpResponse?.requestOptions?.headers.map((key, value) {
           if (value is List) {
@@ -149,7 +149,7 @@ class NetworkInspector {
 
   /// on network request will be sent to server invoke width HttpRequest
   /// more details, see https://chromedevtools.github.io/devtools-protocol/tot/Network/#event-requestWillBeSent
-  void onRequestWillBeSent(EngineContext context, String requestId, VoltronHttpRequest request) {
+  void onRequestWillBeSent(VoltronEngineContext context, String requestId, VoltronHttpRequest request) {
     final Map<String, String> requestHeader = request.getHeaders().map((key, value) {
       if (value is List) {
         return MapEntry(key, value.join(';'));

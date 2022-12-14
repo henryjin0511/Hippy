@@ -22,10 +22,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:voltron_renderer/voltron_renderer.dart';
-
-import 'js_dimension_checker.dart';
-import 'js_engine_context.dart';
-import 'js_instance_context.dart';
+import '../engine.dart';
 
 class JSRenderContext extends RenderContext<JSLoadInstanceContext> {
   JSRenderContext(

@@ -27,9 +27,9 @@ import 'promise.dart';
 class UtilsModule extends VoltronNativeModule {
   static const String kUtilsModuleName = "UtilsModule";
   static const String kFuncCheckAPI = "checkApi";
-  EngineContext? _context;
+  VoltronEngineContext? _context;
 
-  UtilsModule(EngineContext context) : super(context) {
+  UtilsModule(VoltronEngineContext context) : super(context) {
     _context = context;
   }
 

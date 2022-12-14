@@ -33,7 +33,7 @@ class StorageModule extends VoltronNativeModule {
   static const String kFuncMultiRemove = "multiRemove";
   static const String kFuncGetAllKeys = "getAllKeys";
 
-  StorageModule(EngineContext context) : super(context) {
+  StorageModule(VoltronEngineContext context) : super(context) {
     _storageAdapter = context.globalConfigs.storageAdapter;
   }
 

@@ -18,15 +18,6 @@
 // limitations under the License.
 //
 
-library engine;
+library voltron_connector;
 
-export 'engine/bundle.dart';
-export 'engine/engine_define.dart';
-export 'engine/global_config.dart';
-export 'engine/js_api_provider.dart';
-export 'engine/js_init_params.dart';
-export 'engine/js_instance_context.dart';
-export 'engine/js_module_params.dart';
-export 'engine/js_render_context.dart';
-export 'engine/voltron_engine.dart';
-export 'engine/voltron_engine_context.dart';
+export 'js_driver.dart';

@@ -33,7 +33,7 @@ class ModuleAnrMonitor {
   final EngineMonitor? _engineMonitorAdapter;
   final HashMap<int, MonitorMessage> _monitorMessages = HashMap();
 
-  ModuleAnrMonitor(EngineContext context)
+  ModuleAnrMonitor(VoltronEngineContext context)
       : _engineMonitorAdapter = context.globalConfigs.monitorAdapter,
         _needReportBridgeANR =
             context.globalConfigs.monitorAdapter?.needReportBridgeANR() ??

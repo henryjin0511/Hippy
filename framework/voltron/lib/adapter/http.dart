@@ -31,12 +31,12 @@ import '../engine.dart';
 import '../module.dart';
 
 abstract class VoltronHttpAdapter with Destroyable {
-  EngineContext? context;
+  VoltronEngineContext? context;
   TRequestWillBeSentHook? requestWillBeSentHook;
   TResponseReceivedHook? responseReceivedHook;
 
   void init({
-    required EngineContext context,
+    required VoltronEngineContext context,
     TRequestWillBeSentHook? requestWillBeSentHook,
     TResponseReceivedHook? responseReceivedHook,
   }) {

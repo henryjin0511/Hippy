@@ -34,7 +34,7 @@ class DeviceEventModule extends VoltronNativeModule {
   bool _isListening = false;
   BackPressHandler? _backPressHandler;
 
-  DeviceEventModule(EngineContext context) : super(context);
+  DeviceEventModule(VoltronEngineContext context) : super(context);
 
   @override
   Map<String, Function> get extraFuncMap => {

@@ -37,7 +37,7 @@ class WebsocketModule extends VoltronNativeModule {
   static int _autoInt = 0;
   final Map<int, WebSocketClient> mWebSocketConnections = {};
 
-  WebsocketModule(EngineContext context) : super(context);
+  WebsocketModule(VoltronEngineContext context) : super(context);
 
   @VoltronMethod(funcConnect)
   bool connect(VoltronMap params, final JSPromise promise) {
@@ -200,7 +200,7 @@ class WebSocketClient {
 
 class WebSocketListener {
   final int mWebSocketId;
-  final EngineContext context;
+  final VoltronEngineContext context;
   bool mDisconnected = false;
   final WebsocketModule mWebSocketModule;
 

@@ -26,6 +26,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:voltron_connector/voltron_connector.dart';
 import 'package:voltron_ffi/voltron_ffi.dart';
 import 'package:voltron_renderer/voltron_renderer.dart';
 import 'package:voltron_vfs/voltron_vfs.dart';
@@ -54,7 +55,7 @@ class VoltronBridgeManager implements Destroyable {
   static String? sCodeCacheRootDir;
   static HashMap<int, VoltronBridgeManager> bridgeMap = HashMap();
 
-  final EngineContext _context;
+  final VoltronEngineContext _context;
   final VoltronBundleLoader? _coreBundleLoader;
   final VoltronThirdPartyAdapter? _thirdPartyAdapter;
   bool _isFrameWorkInit = false;
@@ -73,8 +74,10 @@ class VoltronBridgeManager implements Destroyable {
 
   VoltronBundleLoader? get coreBundleLoader => _coreBundleLoader;
 
+  final JsDriver _jsDriver;
+
   VoltronBridgeManager(
-    EngineContext context,
+    VoltronEngineContext context,
     VoltronBundleLoader? coreBundleLoader,
     int groupId,
     int id, {
@@ -82,6 +85,7 @@ class VoltronBridgeManager implements Destroyable {
     int bridgeType = kBridgeTypeNormal,
     bool isDevModule = false,
     String debugServerHost = '',
+    required JsDriver jsDriver,
   })  : _context = context,
         _coreBundleLoader = coreBundleLoader,
         _groupId = groupId,
@@ -89,7 +93,8 @@ class VoltronBridgeManager implements Destroyable {
         _isDevModule = isDevModule,
         _debugServerHost = debugServerHost,
         _thirdPartyAdapter = thirdPartyAdapter,
-        _isSingleThread = bridgeType == kBridgeTypeSingleThread {
+        _isSingleThread = bridgeType == kBridgeTypeSingleThread,
+        _jsDriver = jsDriver {
     initCodeCacheDir();
   }
 
@@ -134,10 +139,11 @@ class VoltronBridgeManager implements Destroyable {
     );
   }
 
-  Future<dynamic> initBridge(Callback callback) async {
+  Future<void> initBridge(Callback callback) async {
     try {
       int devtoolsId = await _handleVoltronInspectorInit();
       _context.startTimeMonitor.startEvent(EngineMonitorEventKey.engineLoadEventInitBridge);
+      _v8RuntimeId = _jsDriver.initialize();
       _v8RuntimeId = await VoltronApi.initJsFrameWork(
         globalConfig: getGlobalConfigs(),
         singleThreadMode: _isSingleThread,
@@ -424,8 +430,8 @@ class VoltronBridgeManager implements Destroyable {
     }
   }
 
-  Future<bool> runScriptFromUri(String uri, bool canUseCodeCache,
-      String codeCacheTag, CommonCallback callback) async {
+  Future<bool> runScriptFromUri(
+      String uri, bool canUseCodeCache, String codeCacheTag, CommonCallback callback) async {
     if (!_isFrameWorkInit) {
       return false;
     }
@@ -435,7 +441,8 @@ class VoltronBridgeManager implements Destroyable {
       var codeCacheDir = sCodeCacheRootDir! + codeCacheTag + Platform.pathSeparator;
 
       await VoltronApi.runScriptFromUri(
-          _engineId, _context.vfsManager.id, uri, codeCacheDir, canUseCodeCache, isAssetsUrl(uri), (value) {
+          _engineId, _context.vfsManager.id, uri, codeCacheDir, canUseCodeCache, isAssetsUrl(uri),
+          (value) {
         callback(value);
       });
     } else {

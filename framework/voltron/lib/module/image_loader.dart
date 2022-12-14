@@ -31,7 +31,7 @@ class ImageLoaderModule extends VoltronNativeModule {
   static const String kFuncGetSize = "getSize";
   static const String kFuncPrefetch = "prefetch";
 
-  ImageLoaderModule(EngineContext context) : super(context);
+  ImageLoaderModule(VoltronEngineContext context) : super(context);
 
   @VoltronMethod(kFuncGetSize)
   bool getSize(String url, JSPromise promise) {

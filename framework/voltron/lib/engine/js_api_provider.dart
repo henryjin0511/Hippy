@@ -21,7 +21,7 @@
 import 'package:voltron_renderer/voltron_renderer.dart';
 
 import '../module.dart';
-import 'js_engine_context.dart';
+import '../engine.dart';
 
 abstract class APIProvider {
   List<ModuleGenerator> get nativeModuleGeneratorList;
@@ -33,24 +33,24 @@ abstract class APIProvider {
 
 class ModuleGenerator {
   final String _name;
-  final Generator<VoltronNativeModule, EngineContext> _generator;
+  final Generator<VoltronNativeModule, VoltronEngineContext> _generator;
 
   ModuleGenerator(this._name, this._generator);
 
   String get name => _name;
 
-  VoltronNativeModule generateModule(EngineContext context) => _generator(context);
+  VoltronNativeModule generateModule(VoltronEngineContext context) => _generator(context);
 }
 
 class JavaScriptModuleGenerator {
   final String _name;
-  final Generator<JavaScriptModule, EngineContext> _generator;
+  final Generator<JavaScriptModule, VoltronEngineContext> _generator;
 
   JavaScriptModuleGenerator(this._name, this._generator);
 
   String get name => _name;
 
-  JavaScriptModule generateJsModule(EngineContext context) => _generator(context);
+  JavaScriptModule generateJsModule(VoltronEngineContext context) => _generator(context);
 }
 
 class CoreApi implements APIProvider {

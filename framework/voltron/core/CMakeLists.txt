@@ -53,6 +53,7 @@ set(FRAMEWORK_CORE_DEPS ${FRAMEWORK_CORE_DEPS} footstone)
 # region js_driver
 add_subdirectory(${PROJECT_ROOT_DIR}/driver/js ${CMAKE_CURRENT_BINARY_DIR}/driver/js)
 set(FRAMEWORK_CORE_DEPS ${FRAMEWORK_CORE_DEPS} js_driver)
+message(CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 # endregion
 
 # region dom
@@ -74,8 +75,15 @@ if (ENABLE_INSPECTOR)
 endif ()
 # endregion
 
+# region voltron_connector
+add_subdirectory(${PROJECT_ROOT_DIR}/modules/voltron/connector/core ${CMAKE_CURRENT_BINARY_DIR}/voltron/connector)
+#target_link_libraries(${PROJECT_NAME} PUBLIC voltron_connector)
+# endregion
+
 # region voltron renderer
-add_subdirectory(${RENDER_DIR} ${CMAKE_CURRENT_BINARY_DIR}/render_core)
+if (NOT TARGET render_core)
+  add_subdirectory(${RENDER_DIR} ${CMAKE_CURRENT_BINARY_DIR}/render_core)
+endif ()
 # endregion
 
 # region library

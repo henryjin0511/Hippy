@@ -35,7 +35,7 @@ class NetInfoModule extends VoltronNativeModule {
 
   StreamSubscription? subscription;
 
-  NetInfoModule(EngineContext context) : super(context);
+  NetInfoModule(VoltronEngineContext context) : super(context);
 
   @VoltronMethod(funcGetCurrentConnectivity)
   bool getCurrentConnectivity(final JSPromise promise) {

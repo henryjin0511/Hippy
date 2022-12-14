@@ -34,7 +34,7 @@ class ModuleManager implements Destroyable {
 
   bool _isDestroyed = false;
 
-  final EngineContext _context;
+  final VoltronEngineContext _context;
 
   final HashMap<String, VoltronNativeModule> _nativeModule = HashMap();
   final HashMap<String, JavaScriptModule> _jsModule = HashMap();
@@ -138,7 +138,7 @@ class ModuleManager implements Destroyable {
   }
 
   void _invokeMethod(
-    EngineContext context,
+    VoltronEngineContext context,
     VoltronNativeModule receiver,
     VoltronArray args,
     JSPromise promise,
@@ -246,7 +246,7 @@ class CallNativeParams {
 }
 
 abstract class JavaScriptModule implements Destroyable {
-  final EngineContext context;
+  final VoltronEngineContext context;
 
   JavaScriptModule(this.context);
 
@@ -259,7 +259,7 @@ abstract class JavaScriptModule implements Destroyable {
 abstract class VoltronNativeModule implements Destroyable {
   static const String kModuleAddListener = "addListener";
   static const String kModuleRemoveListener = "removeListener";
-  final EngineContext context;
+  final VoltronEngineContext context;
 
   final HashMap<String, int> _eventMap = HashMap();
 

@@ -25,22 +25,22 @@ import '../engine.dart';
 typedef ModuleExecutor = Function();
 
 // 对外暴露接口
-class VoltronJSLoaderManager {
-  late VoltronJSEngine _engine;
+class VoltronLoaderManager {
+  late VoltronEngine _engine;
 
   final List<ModuleExecutor> pendingExecutor = [];
 
-  VoltronJSLoaderManager._internal(EngineInitParams params) {
-    _engine = VoltronJSEngine.create(params);
+  VoltronLoaderManager._internal(EngineInitParams params) {
+    _engine = VoltronEngine.create(params);
   }
 
   // 框架初始化
-  static VoltronJSLoaderManager createLoaderManager(
+  static VoltronLoaderManager createLoaderManager(
     EngineInitParams params,
     EngineListener listener,
   ) {
     // create voltron engine
-    var render = VoltronJSLoaderManager._internal(params);
+    var render = VoltronLoaderManager._internal(params);
     // init voltron engine
     render._init((status, msg) {
       LogUtils.i("flutter_render", "init engine status($status), msg($msg)");
@@ -56,12 +56,12 @@ class VoltronJSLoaderManager {
     return render;
   }
 
-  VoltronJSLoader createLoader(
+  VoltronLoader createLoader(
     ModuleLoadParams loadParams, {
     ModuleListener? moduleListener,
     OnLoadCompleteListener? onLoadCompleteListener,
   }) {
-    return VoltronJSLoader._internal(
+    return VoltronLoader._internal(
       this,
       loadParams,
       moduleListener: moduleListener,
@@ -101,15 +101,15 @@ class VoltronJSLoaderManager {
   }
 }
 
-class VoltronJSLoader with RendererLoader {
-  final VoltronJSLoaderManager _jsLoaderManager;
+class VoltronLoader with RendererLoader {
+  final VoltronLoaderManager _loaderManager;
   final ModuleListener? _moduleListener;
   final OnLoadCompleteListener? _onLoadCompleteListener;
   final ModuleLoadParams _loadParams;
   RootWidgetViewModel? _instance;
 
-  VoltronJSLoader._internal(
-    this._jsLoaderManager,
+  VoltronLoader._internal(
+    this._loaderManager,
     this._loadParams, {
     ModuleListener? moduleListener,
     OnLoadCompleteListener? onLoadCompleteListener,
@@ -118,15 +118,15 @@ class VoltronJSLoader with RendererLoader {
 
   @override
   bool back(BackPressHandler handler) {
-    return _jsLoaderManager._engine.onBackPressed(handler);
+    return _loaderManager._engine.onBackPressed(handler);
   }
 
   void destroy() {
     var originViewModel = _instance;
     _instance = null;
     if (originViewModel != null) {
-      _jsLoaderManager._execute(() {
-        _jsLoaderManager._engine.destroyInstance(originViewModel);
+      _loaderManager._execute(() {
+        _loaderManager._engine.destroyInstance(originViewModel);
       });
     }
   }
@@ -135,8 +135,8 @@ class VoltronJSLoader with RendererLoader {
   void load(RootWidgetViewModel viewModel) {
     LogUtils.dBridge("load module ready");
     _instance = viewModel;
-    _jsLoaderManager._execute(() {
-      _jsLoaderManager._engine.loadModule(
+    _loaderManager._execute(() {
+      _loaderManager._engine.loadModule(
         _loadParams,
         viewModel,
         listener: _moduleListener,

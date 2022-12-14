@@ -31,7 +31,7 @@ class TestModule extends VoltronNativeModule {
   static const String kHelloNativeMethodName = "helloNative";
   static const String kHelloNativeWithPromiseMethodName = "helloNativeWithPromise";
 
-  TestModule(EngineContext context) : super(context);
+  TestModule(VoltronEngineContext context) : super(context);
 
   @VoltronMethod(kDebugMethodName)
   bool debug(int instanceId, JSPromise promise) {

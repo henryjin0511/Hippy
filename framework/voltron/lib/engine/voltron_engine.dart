@@ -29,7 +29,7 @@ import '../engine.dart';
 import '../inspector.dart';
 import '../module.dart';
 
-class VoltronJSEngine
+class VoltronEngine
     implements OnSizeChangedListener, OnResumeAndPauseListener, DevServerCallback {
   static const String _kTag = "EngineManagerImpl";
 
@@ -65,7 +65,7 @@ class VoltronJSEngine
   //Dev support manager
   late DevSupportManager _devSupportManager;
 
-  EngineContext? _engineContext;
+  VoltronEngineContext? _engineContext;
 
   // 从网络上加载jsbundle
   late bool _debugMode;
@@ -91,19 +91,19 @@ class VoltronJSEngine
 
   late EngineMonitor _engineMonitor;
 
-  EngineContext? get engineContext => _engineContext;
+  VoltronEngineContext? get engineContext => _engineContext;
 
   EngineState get engineState => _currentState;
 
-  static VoltronJSEngine create(EngineInitParams params) {
+  static VoltronEngine create(EngineInitParams params) {
     params.check();
     LogUtils.enableDebugLog(params.enableLog);
     LogUtils.setLogMethod(params.logListener);
 
-    return VoltronJSEngine(params, null);
+    return VoltronEngine(params, null);
   }
 
-  VoltronJSEngine(EngineInitParams params, VoltronBundleLoader? preloadBundleLoader) {
+  VoltronEngine(EngineInitParams params, VoltronBundleLoader? preloadBundleLoader) {
     // create core bundle loader
     VoltronBundleLoader? coreBundleLoader;
     if (!isEmpty(params.coreJSAssetsPath)) {
@@ -286,9 +286,9 @@ class VoltronJSEngine
       _currentState = EngineState.onRestart;
     }
 
-    _engineContext?.destroy(isReload);
+    if (isReload) _engineContext?.destroy(true);
 
-    _engineContext = EngineContext(
+    _engineContext = VoltronEngineContext(
       _apiProviders,
       _coreBundleLoader,
       bridgeType,

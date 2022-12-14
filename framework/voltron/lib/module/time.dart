@@ -37,7 +37,7 @@ class TimeModule extends VoltronNativeModule
 
   final HashMap<String, TimerTask> _timeInfo = HashMap();
 
-  TimeModule(EngineContext context) : super(context) {
+  TimeModule(VoltronEngineContext context) : super(context) {
     context.addEngineLifecycleEventListener(this);
   }
 
