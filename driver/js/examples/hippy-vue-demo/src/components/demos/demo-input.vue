@@ -1,11 +1,11 @@
 <template>
   <div
     class="demo-input"
-    @click="blurAllInput"
   >
     <div
       ref="inputDemo"
       class="demo-input-container"
+      @click="blurAllInput"
     >
       <label>文本:</label>
       <input
@@ -163,6 +163,7 @@ export default {
 .demo-input .demo-input-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .demo-input .input {
