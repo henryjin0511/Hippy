@@ -2,6 +2,7 @@
 // Created by henryjin on 2022/12/9.
 //
 
+#include <footstone/worker_manager.h>
 #include "render/bridge/bridge_manager.h"
 #include "bridge/ffi_bridge_runtime.h"
 #include "callback_manager.h"
@@ -16,25 +17,21 @@
 using voltron::BridgeManager;
 using voltron::FFIJSBridgeRuntime;
 
-EXTERN_C void LoadInstanceFFI(int32_t engine_id, const char* params, int32_t params_length) {
-  auto bridge_manager = BridgeManager::Find(engine_id);
-  if (!bridge_manager) {
-    FOOTSTONE_DLOG(WARNING) << "LoadInstanceFFI engine_id invalid";
-    return;
-  }
+EXTERN_C int64_t InitJSFrameworkFFI(const char16_t* global_config, int32_t single_thread_mode,
+                                    int32_t bridge_param_json, int32_t is_dev_module, int64_t group_id,
+                                    uint32_t work_manager_id, uint32_t dom_manager_id,
+                                    int32_t engine_id, int32_t callback_id, uint32_t devtools_id) {
+  auto ffi_runtime = std::make_shared<FFIJSBridgeRuntime>(engine_id);
+  BridgeManager::Create(engine_id, ffi_runtime);
 
-  auto runtime = std::static_pointer_cast<FFIJSBridgeRuntime>(bridge_manager->GetRuntime());
-  if (!runtime) {
-    FOOTSTONE_DLOG(WARNING) << "LoadInstanceFFI runtime unbind";
-    return;
-  }
+  std::shared_ptr<WorkerManager>
+    worker_manager = voltron::BridgeManager::FindWorkerManager(work_manager_id);
+  FOOTSTONE_DCHECK(worker_manager != nullptr);
 
-  auto runtime_id = runtime->GetRuntimeId();
-  if (params_length <= 0) {
-    FOOTSTONE_DLOG(WARNING) << "LoadInstanceFFI params length error";
-    return;
-  }
+  auto result = BridgeImpl::InitJsEngine(ffi_runtime, single_thread_mode, bridge_param_json, is_dev_module, group_id,
+                                         worker_manager, dom_manager_id, global_config, 0, 0,
+                                         [callback_id](int64_t value) { CallGlobalCallback(callback_id, value); }, devtools_id);
+  ffi_runtime->SetRuntimeId(result);
 
-  std::string param_str(params, static_cast<unsigned int>(params_length));
-  BridgeImpl::LoadInstance(runtime_id, std::move(param_str));
+  return result;
 }

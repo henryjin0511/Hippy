@@ -143,8 +143,7 @@ class VoltronBridgeManager implements Destroyable {
     try {
       int devtoolsId = await _handleVoltronInspectorInit();
       _context.startTimeMonitor.startEvent(EngineMonitorEventKey.engineLoadEventInitBridge);
-      _v8RuntimeId = _jsDriver.initialize();
-      _v8RuntimeId = await VoltronApi.initJsFrameWork(
+      _v8RuntimeId = await _jsDriver.initialize(
         globalConfig: getGlobalConfigs(),
         singleThreadMode: _isSingleThread,
         isDevModule: _isDevModule,
@@ -192,6 +191,54 @@ class VoltronBridgeManager implements Destroyable {
         },
         devtoolsId: devtoolsId,
       );
+      // _v8RuntimeId = await VoltronApi.initJsFrameWork(
+      //   globalConfig: getGlobalConfigs(),
+      //   singleThreadMode: _isSingleThread,
+      //   isDevModule: _isDevModule,
+      //   groupId: _groupId,
+      //   engineId: _engineId,
+      //   workerManagerId: _context.renderContext.workerManagerId,
+      //   domId: _context.renderContext.domHolder.id,
+      //   callback: (value) async {
+      //     _isFrameWorkInit = true;
+      //     _thirdPartyAdapter?.setVoltronBridgeId(value);
+      //
+      //     _context.onRuntimeInitialized(_v8RuntimeId);
+      //
+      //     _context.startTimeMonitor.startEvent(
+      //       EngineMonitorEventKey.engineLoadEventLoadCommonJs,
+      //     );
+      //     var coreBundleLoader = _coreBundleLoader;
+      //     if (coreBundleLoader != null) {
+      //       try {
+      //         await coreBundleLoader.load(this, (ret, e) {
+      //           _isFrameWorkInit = ret == 1;
+      //           Error? error;
+      //           if (!_isFrameWorkInit) {
+      //             error = StateError(
+      //               "load coreJsBundle failed,check your core jsBundle",
+      //             );
+      //           } else {
+      //             bridgeMap[_engineId] = this;
+      //             _context.renderContext.renderBridgeManager.init();
+      //           }
+      //           callback(_isFrameWorkInit, error);
+      //         });
+      //       } catch (e) {
+      //         if (e is Error) {
+      //           LogUtils.e(_kTag, '${e.stackTrace}');
+      //         }
+      //         callback(_isFrameWorkInit, StateError(e.toString()));
+      //       }
+      //     } else {
+      //       _isFrameWorkInit = true;
+      //       bridgeMap[_engineId] = this;
+      //       _context.renderContext.renderBridgeManager.init();
+      //       callback(_isFrameWorkInit, null);
+      //     }
+      //   },
+      //   devtoolsId: devtoolsId,
+      // );
     } catch (e) {
       _isFrameWorkInit = false;
       if (e is Error) {

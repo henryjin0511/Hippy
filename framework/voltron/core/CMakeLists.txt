@@ -77,7 +77,7 @@ endif ()
 
 # region voltron_connector
 add_subdirectory(${PROJECT_ROOT_DIR}/modules/voltron/connector/core ${CMAKE_CURRENT_BINARY_DIR}/voltron/connector)
-#target_link_libraries(${PROJECT_NAME} PUBLIC voltron_connector)
+target_link_libraries(${PROJECT_NAME} PUBLIC voltron_connector)
 # endregion
 
 # region voltron renderer
