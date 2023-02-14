@@ -2,8 +2,9 @@
 // Created by henryjin on 2022/12/9.
 //
 
+#include "js_driver.h"
+
 #include <footstone/worker_manager.h>
-#include "render/bridge/bridge_manager.h"
 #include "bridge/ffi_bridge_runtime.h"
 #include "callback_manager.h"
 #include "footstone/logging.h"
@@ -12,6 +13,10 @@
 #  include "bridge_impl.h"
 #else
 #  include "bridge_impl_ios.h"
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 using voltron::BridgeManager;
@@ -23,7 +28,7 @@ EXTERN_C int64_t InitJSFrameworkFFI(const char16_t* global_config, int32_t singl
                                     int32_t engine_id, int32_t callback_id, uint32_t devtools_id) {
   auto ffi_runtime = std::make_shared<FFIJSBridgeRuntime>(engine_id);
   BridgeManager::Create(engine_id, ffi_runtime);
-
+//  throw 123000000000;
   std::shared_ptr<WorkerManager>
     worker_manager = voltron::BridgeManager::FindWorkerManager(work_manager_id);
   FOOTSTONE_DCHECK(worker_manager != nullptr);
@@ -35,3 +40,11 @@ EXTERN_C int64_t InitJSFrameworkFFI(const char16_t* global_config, int32_t singl
 
   return result;
 }
+
+EXTERN_C int32_t AddAdd (int32_t a, int32_t b) {
+  return a + b;
+}
+
+#ifdef __cplusplus
+}
+#endif

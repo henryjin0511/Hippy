@@ -116,8 +116,6 @@ class VoltronEngineContext with RenderContextProxy {
         _isDevMode = isDevModule,
         _debugServerHost = serverHost,
         _startTimeMonitor = monitor {
-    _initVfsManager();
-    _moduleManager = ModuleManager(this, apiProviders);
     _renderContext = JSRenderContext(
       this,
       _id,
@@ -129,6 +127,8 @@ class VoltronEngineContext with RenderContextProxy {
       domHolder,
       rootViewModelMap,
     );
+    /// 初始化vfs管理模块
+    _initVfsManager();
     if (_isDevMode) {
       _devtoolsManager = DevtoolsManager(true);
     }
@@ -166,8 +166,7 @@ class VoltronEngineContext with RenderContextProxy {
 
   void _initVfsManager() {
     _vfsManager = VfsManager(_renderContext.workerManagerId);
-    DefaultProcessor processor =
-        DefaultProcessor(VoltronResourceLoader(_globalConfigs.httpAdapter));
+    DefaultProcessor processor = DefaultProcessor(VoltronResourceLoader(_globalConfigs.httpAdapter));
     _vfsManager.addProcessor(processor);
   }
 

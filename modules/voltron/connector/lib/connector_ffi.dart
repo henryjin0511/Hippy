@@ -13,7 +13,11 @@ class ConnectFFI {
   // 初始化js framework
   late InitJsFrameworkFfiDartType initJsFramework;
 
+  late AddFfiDartType add;
+
   ConnectFFI._internal() {
+    add = _library.lookupFunction<AddFfiNativeType, AddFfiDartType>("AddAdd");
+    print(add(1, 2));
     initJsFramework = _library.lookupFunction<InitJsFrameworkFfiNativeType, InitJsFrameworkFfiDartType>(
       "InitJSFrameworkFFI",
     );

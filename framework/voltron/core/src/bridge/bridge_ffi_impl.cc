@@ -100,24 +100,28 @@ EXTERN_C void UnloadInstanceFFI(int32_t engine_id, const char* params, int32_t p
   BridgeImpl::UnloadInstance(runtime_id, std::move(param_str));
 }
 
-EXTERN_C int64_t InitJSFrameworkFFI(const char16_t* global_config, int32_t single_thread_mode,
-                                    int32_t bridge_param_json, int32_t is_dev_module, int64_t group_id,
-                                    uint32_t work_manager_id, uint32_t dom_manager_id,
-                                    int32_t engine_id, int32_t callback_id, uint32_t devtools_id) {
-  auto ffi_runtime = std::make_shared<FFIJSBridgeRuntime>(engine_id);
-  BridgeManager::Create(engine_id, ffi_runtime);
+//EXTERN_C int64_t InitJSFrameworkFFI(const char16_t* global_config, int32_t single_thread_mode,
+//                                    int32_t bridge_param_json, int32_t is_dev_module, int64_t group_id,
+//                                    uint32_t work_manager_id, uint32_t dom_manager_id,
+//                                    int32_t engine_id, int32_t callback_id, uint32_t devtools_id) {
+//  auto ffi_runtime = std::make_shared<FFIJSBridgeRuntime>(engine_id);
+//  BridgeManager::Create(engine_id, ffi_runtime);
+//
+//  std::shared_ptr<WorkerManager>
+//      worker_manager = voltron::BridgeManager::FindWorkerManager(work_manager_id);
+//  FOOTSTONE_DCHECK(worker_manager != nullptr);
+//
+//  auto result = BridgeImpl::InitJsEngine(ffi_runtime, single_thread_mode, bridge_param_json, is_dev_module, group_id,
+//                                         worker_manager, dom_manager_id, global_config, 0, 0,
+//                                         [callback_id](int64_t value) { CallGlobalCallback(callback_id, value); }, devtools_id);
+//  ffi_runtime->SetRuntimeId(result);
+//
+//  return result;
+//}
 
-  std::shared_ptr<WorkerManager>
-      worker_manager = voltron::BridgeManager::FindWorkerManager(work_manager_id);
-  FOOTSTONE_DCHECK(worker_manager != nullptr);
-
-  auto result = BridgeImpl::InitJsEngine(ffi_runtime, single_thread_mode, bridge_param_json, is_dev_module, group_id,
-                                         worker_manager, dom_manager_id, global_config, 0, 0,
-                                         [callback_id](int64_t value) { CallGlobalCallback(callback_id, value); }, devtools_id);
-  ffi_runtime->SetRuntimeId(result);
-
-  return result;
-}
+//EXTERN_C int32_t AddAdd (int32_t a, int32_t b) {
+//  return a + b;
+//}
 
 EXTERN_C int32_t RunScriptFromUriFFI(int32_t engine_id,
                                      uint32_t vfs_id,

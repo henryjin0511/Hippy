@@ -26,3 +26,13 @@ typedef InitJsFrameworkFfiDartType = int Function(
   int callbackId,
   int devtoolsId,
 );
+
+typedef AddFfiNativeType = Int32 Function(
+    Int32 a,
+    Int32 b
+);
+
+typedef AddFfiDartType = int Function(
+    int a,
+    int b
+);

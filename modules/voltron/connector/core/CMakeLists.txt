@@ -36,7 +36,7 @@ include(${PROJECT_ROOT_DIR}/framework/voltron/cmake/compile_option.cmake)
 
 # region library
 add_library(${PROJECT_NAME} STATIC)
-target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILE_OPTIONS})
 # endregion
 
@@ -45,6 +45,26 @@ message(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # region footstone
 GlobalPackages_Add(footstone)
 target_link_libraries(${PROJECT_NAME} PRIVATE footstone)
+# endregion
+
+# region dom
+GlobalPackages_Add(dom)
+target_link_libraries(${PROJECT_NAME} PRIVATE dom)
+# endregion
+
+# region vfs
+GlobalPackages_Add(vfs)
+#set(FRAMEWORK_CORE_DEPS ${FRAMEWORK_CORE_DEPS} vfs)
+target_link_libraries(${PROJECT_NAME} PRIVATE vfs)
+# endregion
+
+# region js_driver
+if (NOT TARGET voltron_ffi)
+#  add_subdirectory(${PROJECT_ROOT_DIR}/modules/voltron/ffi/core ${CMAKE_CURRENT_BINARY_DIR}/voltron/ffi)
+  add_subdirectory(${PROJECT_ROOT_DIR}/driver/js ${CMAKE_CURRENT_BINARY_DIR}/driver/js)
+endif ()
+target_link_libraries(${PROJECT_NAME} PRIVATE js_driver)
+message(CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 # endregion
 
 # region voltron_ffi
@@ -64,5 +84,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE render_core)
 # region source set
 set(CONNECTOR_SOURCE_SET src/js_driver.cc)
 
-target_sources(${PROJECT_NAME} PRIVATE ${CONNECTOR_SOURCE_SET})
+target_sources(${PROJECT_NAME} PUBLIC ${CONNECTOR_SOURCE_SET})
 # endregion
