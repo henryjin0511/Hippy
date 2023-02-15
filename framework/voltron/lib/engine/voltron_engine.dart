@@ -306,7 +306,7 @@ class VoltronEngine
       _engineContext?.renderContext.domHolder,
       _engineContext?.renderContext.rootViewModelMap,
     );
-    await _engineContext!.bridgeManager.initBridge((param, e) {
+    await _engineContext!.bridgeManager.initJSBridge((param, e) {
       if (_currentState != EngineState.onInit && _currentState != EngineState.onRestart) {
         LogUtils.e(
           _kTag,
