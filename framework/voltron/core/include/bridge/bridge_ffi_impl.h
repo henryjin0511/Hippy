@@ -39,13 +39,6 @@ enum class NetworkEventType {
   kLoadingFinished
 };
 
-//EXTERN_C int64_t InitJSFrameworkFFI(const char16_t* global_config, int32_t single_thread_mode,
-//                                    int32_t bridge_param_json, int32_t is_dev_module, int64_t group_id,
-//                                    uint32_t work_manager_id, uint32_t dom_manager_id,
-//                                    int32_t engine_id, int32_t callback_id, uint32_t devtools_id);
-
-//EXTERN_C int32_t AddAdd(int32_t a, int32_t b);
-
 EXTERN_C int32_t RunScriptFromFileFFI(int32_t engine_id, const char16_t* file_path, const char16_t* script_name,
                                       const char16_t* code_cache_dir, int32_t can_use_code_cache, int32_t callback_id);
 
@@ -53,25 +46,11 @@ EXTERN_C int32_t RunScriptFromAssetsFFI(int32_t engine_id, const char16_t* asset
                                         int32_t can_use_code_cache, const char16_t* asset_str_char,
                                         int32_t callback_id);
 
-EXTERN_C int32_t RunScriptFromUriFFI(int32_t engine_id,
-                                     uint32_t vfs_id,
-                                     const char16_t *uri,
-                                     const char16_t *code_cache_dir,
-                                     int32_t can_use_code_cache,
-                                     int32_t is_local_file,
-                                     int32_t callback_id);
-
-EXTERN_C void LoadInstanceFFI(int32_t engine_id,
-                              const char *params, int32_t params_length);
-
-EXTERN_C void UnloadInstanceFFI(int32_t engine_id,
-                                const char *params, int32_t params_length);
-
 EXTERN_C void CallFunctionFFI(int32_t engine_id, const char16_t* action, const char* params, int32_t params_length, int32_t callback_id);
 
 EXTERN_C const char* GetCrashMessageFFI();
 
-EXTERN_C void DestroyFFI(int32_t engine_id, int32_t callback_id, int32_t is_reload);
+
 
 EXTERN_C void NotifyNetworkEvent(int32_t engine_id, const char16_t* request_id, int32_t event_type, const char16_t* response, const char16_t* extra);
 

@@ -290,7 +290,7 @@ class VoltronBridgeManager implements Destroyable {
     map.push("id", id);
     map.push("params", params);
 
-    await VoltronApi.loadInstance(_engineId, map);
+    await _jsDriver.loadInstance(_engineId, map);
   }
 
   Future<dynamic> resumeInstance(int id) async {
@@ -312,12 +312,12 @@ class VoltronBridgeManager implements Destroyable {
     var map = VoltronMap();
     map.push("id", id);
 
-    await VoltronApi.unloadInstance(_engineId, map);
+    await _jsDriver.unloadInstance(_engineId, map);
   }
 
   Future<dynamic> destroyBridge(DestoryBridgeCallback<bool> callback, bool isReload) async {
     _thirdPartyAdapter?.onRuntimeDestroy();
-    await VoltronApi.destroy(
+    await _jsDriver.destroy(
       _engineId,
       (value) {
         onDestroy();
@@ -329,11 +329,9 @@ class VoltronBridgeManager implements Destroyable {
 
   Future<dynamic> callJsFunction(Object params, String action) async {
     LogUtils.dBridge("call function ($action), params($params)");
-
     if (!_isFrameWorkInit) {
       return;
     }
-
     await VoltronApi.callFunction(_engineId, action, params, (value) {});
   }
 
@@ -433,28 +431,47 @@ class VoltronBridgeManager implements Destroyable {
   }
 
   Future<bool> runScriptFromUri(
-      String uri, bool canUseCodeCache, String codeCacheTag, CommonCallback callback) async {
+    String uri,
+    bool canUseCodeCache,
+    String codeCacheTag,
+    CommonCallback callback,
+  ) async {
     if (!_isFrameWorkInit) {
       return false;
     }
     if (!isEmpty(codeCacheTag) && !isEmpty(sCodeCacheRootDir)) {
-      LogUtils.i(_kTag,
-          "runScriptFromUri ======core====== $codeCacheTag${", canUseCodeCache == $canUseCodeCache"}");
+      LogUtils.i(
+        _kTag,
+        "runScriptFromUri ======core====== $codeCacheTag${", canUseCodeCache == $canUseCodeCache"}",
+      );
       var codeCacheDir = sCodeCacheRootDir! + codeCacheTag + Platform.pathSeparator;
 
-      await VoltronApi.runScriptFromUri(
-          _engineId, _context.vfsManager.id, uri, codeCacheDir, canUseCodeCache, isAssetsUrl(uri),
-          (value) {
-        callback(value);
-      });
+      await _jsDriver.runScriptFromUri(
+        _engineId,
+        _context.vfsManager.id,
+        uri,
+        codeCacheDir,
+        canUseCodeCache,
+        isAssetsUrl(uri),
+        (value) {
+          callback(value);
+        },
+      );
     } else {
       LogUtils.i(_kTag, 'runScriptFromUri codeCacheTag is null');
 
       var codeCacheDir = '$codeCacheTag${Platform.pathSeparator}';
-      await VoltronApi.runScriptFromUri(
-          _engineId, _context.vfsManager.id, uri, codeCacheDir, false, isAssetsUrl(uri), (value) {
-        callback(value);
-      });
+      await _jsDriver.runScriptFromUri(
+        _engineId,
+        _context.vfsManager.id,
+        uri,
+        codeCacheDir,
+        false,
+        isAssetsUrl(uri),
+        (value) {
+          callback(value);
+        },
+      );
     }
 
     return true;
