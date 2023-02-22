@@ -633,9 +633,9 @@ packages:
   voltron_renderer:
     dependency: transitive
     description:
-      name: voltron_renderer
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../../../renderer/voltron"
+      relative: true
+    source: path
     version: "0.0.8"
   voltron_vfs:
     dependency: transitive

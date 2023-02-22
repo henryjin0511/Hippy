@@ -17,12 +17,16 @@
 package com.tencent.mtt.hippy.example;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import androidx.annotation.Nullable;
+
+import com.tencent.mtt.hippy.HippyAPIProvider;
 import com.tencent.mtt.hippy.HippyEngine;
 import com.tencent.mtt.hippy.HippyEngine.EngineInitStatus;
 import com.tencent.mtt.hippy.HippyEngine.EngineListener;
@@ -30,18 +34,24 @@ import com.tencent.mtt.hippy.HippyEngine.ModuleLoadStatus;
 import com.tencent.mtt.hippy.HippyEngineManager;
 import com.tencent.mtt.hippy.HippyRootView;
 import com.tencent.mtt.hippy.HippyRootViewParams;
+import com.tencent.mtt.hippy.adapter.DefaultLogAdapter;
+import com.tencent.mtt.hippy.adapter.exception.HippyExceptionHandlerAdapter;
 import com.tencent.mtt.hippy.bridge.bundleloader.HippyAssetBundleLoader;
+import com.tencent.mtt.hippy.common.Callback;
 import com.tencent.mtt.hippy.common.HippyJsException;
 import com.tencent.mtt.hippy.common.HippyMap;
 import com.tencent.mtt.hippy.modules.nativemodules.deviceevent.DeviceEventModule;
 import com.tencent.mtt.hippy.utils.LogUtils;
+import com.tencent.renderer.ControllerProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings({"deprecation", "unused"})
-public class BaseActivity extends Activity implements EngineListener, DeviceEventModule.InvokeDefaultBackPress
+public class BaseActivity extends Activity
 {
-
-    private HippyEngineManager		mEngineManager;
-	private ViewGroup mInstance;
+    private HippyEngine mHippyEngine;
+    private ViewGroup mHippyView;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -50,19 +60,141 @@ public class BaseActivity extends Activity implements EngineListener, DeviceEven
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        MyHippyEngineHost mHost = new MyHippyEngineHost(BaseActivity.this.getApplication());
-		mEngineManager = mHost.createDebugHippyEngineManager("index.bundle", getIntent().getStringExtra("remoteServerUrl"));
-		mEngineManager.addEngineEventListener(this);
-		mEngineManager.initEngineInBackground();
+//        MyHippyEngineHost mHost = new MyHippyEngineHost(BaseActivity.this.getApplication());
+//		mEngineManager = mHost.createDebugHippyEngineManager("index.bundle", getIntent().getStringExtra("remoteServerUrl"));
+//		mEngineManager.addEngineEventListener(this);
+//		mEngineManager.initEngineInBackground();
+//
+//		getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
-		getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        // 1/3. 初始化hippy引擎
+        {
+            HippyEngine.EngineInitParams initParams = new HippyEngine.EngineInitParams();
+            // 必须：宿主（Hippy的使用者）的Context
+            // 若存在多个Activity加载多个业务jsbundle的情况，则这里初始化引擎时建议使用Application的Context
+            initParams.context = this;
+            initParams.debugServerHost = "localhost:38989";
+            // 可选：是否设置为debug模式，默认为false。调试模式下，所有jsbundle都是从debug server上下载
+            initParams.debugMode = false;
+            // 可选：是否打印引擎的完整的log。默认为false
+
+            initParams.enableLog = true;
+            initParams.logAdapter = new DefaultLogAdapter();
+            // 可选：debugMode = false 时必须设置coreJSAssetsPath或coreJSFilePath（debugMode = true时，所有jsbundle都是从debug server上下载）
+            initParams.coreJSAssetsPath = "bundle/newVendor.ios.js";
+
+            initParams.codeCacheTag = "common1";
+
+            // 可选：异常处理器
+            initParams.exceptionHandler = new HippyExceptionHandlerAdapter() {
+                // JavaScript执行异常
+                @Override
+                public void handleJsException(HippyJsException exception) {
+                    LogUtils.e("hippy", exception.getMessage() + exception.getStack());
+                }
+
+                // Native代码执行异常：包括sdk和业务定制代码
+                @Override
+                public void handleNativeException(Exception e, boolean haveCaught) {
+                    e.printStackTrace();
+                    new AlertDialog.Builder(BaseActivity.this).setTitle("Native Exception: ")
+                        .setMessage(e.getMessage())
+                        .setPositiveButton("Close", null)
+                        .show();
+                }
+
+                // JavaScript代码Trace，业务层一般不需要
+                @Override
+                public void handleBackgroundTracing(String details) {
+                    LogUtils.e("hippy", details);
+                }
+            };
+            List<HippyAPIProvider> moduleProviders = new ArrayList<>();
+            moduleProviders.add(new MyAPIProvider());
+            initParams.moduleProviders = moduleProviders;
+            List<ControllerProvider> controllerProviders = new ArrayList<>();
+            controllerProviders.add(new MyControllerProvider());
+            initParams.controllerProviders = controllerProviders;
+
+            // 可选： 是否启用turbo能力
+            initParams.enableTurbo = true;
+
+            // 根据EngineInitParams创建引擎实例
+            mHippyEngine = HippyEngine.create(initParams);
+            // 异步初始化Hippy引擎
+            mHippyEngine.initEngine(new HippyEngine.EngineListener() {
+                // Hippy引擎初始化完成
+                /**
+                 * @param  statusCode
+                 *         status code from initializing procedure
+                 * @param  msg
+                 *         Message from initializing procedure
+                 */
+                @Override
+                public void onInitialized(EngineInitStatus statusCode, String msg) {
+                    if (statusCode != EngineInitStatus.STATUS_OK) {
+                        LogUtils
+                            .e("MyActivity", "hippy engine init failed code:" + statusCode + ", msg=" + msg);
+                    } else {
+                        // 2/3. 加载hippy前端模块
+
+                        HippyEngine.ModuleLoadParams loadParams = new HippyEngine.ModuleLoadParams();
+                        // 必须：该Hippy模块将要挂在的Activity or Dialog的context
+                        loadParams.context = BaseActivity.this;
+						/*
+						  必须：指定要加载的Hippy模块里的组件（component）。componentName对应的是js文件中的"appName"，比如：
+						  var hippy = new Hippy({
+						      appName: "Demo",
+						      entryPage: App
+						  });
+						  */
+                        loadParams.componentName = "Demo";
+
+                        loadParams.codeCacheTag = "Demo2";
+						/*
+						  可选：二选一设置。自己开发的业务模块的jsbundle的assets路径（assets路径和文件路径二选一，优先使用assets路径）
+						  debugMode = false 时必须设置jsAssetsPath或jsFilePath（debugMode = true时，所有jsbundle都是从debug server上下载）
+						 */
+                        loadParams.jsAssetsPath = "bundle/setting.index.ios.js";
+						/*
+						  可选：二选一设置。自己开发的业务模块的jsbundle的文件路径（assets路径和文件路径二选一，优先使用assets路径）
+						  debugMode = false 时必须设置jsAssetsPath或jsFilePath（debugMode = true时，所有jsbundle都是从debug server上下载）
+						 */
+                        loadParams.jsFilePath = null;
+                        // 可选：发送给Hippy前端模块的参数
+                        loadParams.jsParams = new HippyMap();
+                        loadParams.jsParams.pushString("msgFromNative", "Hi js developer, I come from native code!");
+                        // 加载Hippy前端模块
+                        mHippyView = mHippyEngine.loadModule(loadParams, new HippyEngine.ModuleListener() {
+                            @Override
+                            public void onLoadCompleted(ModuleLoadStatus statusCode, String msg) {
+                                if (statusCode != ModuleLoadStatus.STATUS_OK) {
+                                    LogUtils.e("MyActivity", "loadModule failed code:" + statusCode + ", msg=" + msg);
+                                }
+                            }
+
+                            @Override
+                            public boolean onJsException(HippyJsException exception) {
+                                return true;
+                            }
+
+                            @Override
+                            public void onFirstViewAdded() {
+                                LogUtils.e("MyActivity", "onFirstViewAdded");
+                            }
+                        });
+
+                        setContentView(mHippyView);
+                    }
+                }
+            });
+        }
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-		mEngineManager.onEngineResume();
 	}
 
 
@@ -70,69 +202,102 @@ public class BaseActivity extends Activity implements EngineListener, DeviceEven
 	protected void onStop()
 	{
 		super.onStop();
-		mEngineManager.onEnginePause();
 	}
+
+//	@Override
+//	protected void onDestroy()
+//	{
+//		mEngineManager.removeEngineEventListener(this);
+//		mEngineManager.destroyEngine();
+//		super.onDestroy();
+//	}
 
 	@Override
 	protected void onDestroy()
 	{
-		mEngineManager.removeEngineEventListener(this);
-		mEngineManager.destroyEngine();
-		super.onDestroy();
-	}
-
-	@Override
-	public void onBackPressed() {
-		if (!mEngineManager.onBackPress(this)) {
-			super.onBackPressed();
-		}
-	}
-
-
-	@Override
-	public void callSuperOnBackPress()
-	{
-
-		super.onBackPressed();
+        // 3/3. 摧毁hippy前端模块，摧毁hippy引擎
+        mHippyEngine.destroyModule(mHippyView, new Callback<Boolean>() {
+            @Override
+            public void callback(@Nullable Boolean result, @Nullable Throwable e) {
+                mHippyEngine.destroyEngine();
+            }
+        });
+        super.onDestroy();
 	}
 
 
-	@Override
-	public void onInitialized(EngineInitStatus i, String s) {
-		HippyRootViewParams.Builder builder = new HippyRootViewParams.Builder();
-		HippyMap params = new HippyMap();
-		HippyAssetBundleLoader hippyAssetBundleLoader = new HippyAssetBundleLoader(this,"index.android.js");
-		if(!mEngineManager.isDebugMode())
-		{
-			builder.setBundleLoader(hippyAssetBundleLoader);
-		}
-		builder.setActivity(BaseActivity.this).setName("Demo")
-				.setLaunchParams(params);
-		mInstance = mEngineManager.loadInstance(builder.build(), new HippyEngine.ModuleListener() {
+    @Override
+    public void onBackPressed() {
+        // 可选：让hippy前端能够监听并拦截back事件
+        boolean handled = mHippyEngine.onBackPressed(new HippyEngine.BackPressHandler() {
+            @Override
+            public void handleBackPress() {
+                BaseActivity.this.doActivityBack();
+            }
+        });
 
-					// Hippy模块加载监听
-					/**
-					 * @param  statusCode status code from initializing procedure
-					 * @param  msg Message from initializing procedure
-					 */
-					@Override
-					public void onLoadCompleted(ModuleLoadStatus statusCode, String msg) {
-						if (statusCode == ModuleLoadStatus.STATUS_OK) {
-							LogUtils.d("BaseActivity", "onLoadCompleted: statusCode=ModuleLoadStatus.STATUS_OK");
-						}
-					}
+        if (!handled) {
+            super.onBackPressed();
+        }
+    }
 
-					@Override
-					public boolean onJsException(HippyJsException exception) {
-						return true;
-					}
+    // 可选：让hippy前端能够监听并拦截back事件
+    public void doActivityBack() {
+        super.onBackPressed();
+    }
 
-					@Override
-					public void onFirstViewAdded() {
-						LogUtils.e("MyActivity", "onFirstViewAdded");
-					}
-				}
-		);
-		setContentView(mInstance);
-	}
+//	@Override
+//	public void onBackPressed() {
+//		if (!mEngineManager.onBackPress(this)) {
+//			super.onBackPressed();
+//		}
+//	}
+
+
+//	@Override
+//	public void callSuperOnBackPress()
+//	{
+//
+//		super.onBackPressed();
+//	}
+
+
+//	@Override
+//	public void onInitialized(EngineInitStatus i, String s) {
+//		HippyRootViewParams.Builder builder = new HippyRootViewParams.Builder();
+//		HippyMap params = new HippyMap();
+//		HippyAssetBundleLoader hippyAssetBundleLoader = new HippyAssetBundleLoader(this,"bundle/index.android.js");
+//		if(!mEngineManager.isDebugMode())
+//		{
+//			builder.setBundleLoader(hippyAssetBundleLoader);
+//		}
+//		builder.setActivity(BaseActivity.this).setName("Demo")
+//				.setLaunchParams(params);
+//		mInstance = mEngineManager.loadInstance(builder.build(), new HippyEngine.ModuleListener() {
+//
+//					// Hippy模块加载监听
+//					/**
+//					 * @param  statusCode status code from initializing procedure
+//					 * @param  msg Message from initializing procedure
+//					 */
+//					@Override
+//					public void onLoadCompleted(ModuleLoadStatus statusCode, String msg) {
+//						if (statusCode == ModuleLoadStatus.STATUS_OK) {
+//							LogUtils.d("BaseActivity", "onLoadCompleted: statusCode=ModuleLoadStatus.STATUS_OK");
+//						}
+//					}
+//
+//					@Override
+//					public boolean onJsException(HippyJsException exception) {
+//						return true;
+//					}
+//
+//					@Override
+//					public void onFirstViewAdded() {
+//						LogUtils.e("MyActivity", "onFirstViewAdded");
+//					}
+//				}
+//		);
+//		setContentView(mInstance);
+//	}
 }

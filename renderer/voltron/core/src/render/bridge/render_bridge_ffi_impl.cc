@@ -244,9 +244,9 @@ EXTERN_C uint32_t CreateDomInstance(uint32_t worker_manager_id) {
 
 EXTERN_C void DestroyDomInstance(uint32_t dom_manager_id) {
   auto dom_manager = hippy::DomManager::Find(dom_manager_id);
-  if (dom_manager) {
-    hippy::DomManager::Erase(dom_manager_id);
-  }
+//  if (dom_manager) {
+//    hippy::DomManager::Erase(dom_manager_id);
+//  }
 }
 
 EXTERN_C void AddRoot(

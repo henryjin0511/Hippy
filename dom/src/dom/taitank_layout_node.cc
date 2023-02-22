@@ -154,7 +154,7 @@ TAITANK_GET_STYLE_DECL(Direction, HPDirection, HPDirection::DirectionLTR)
   }
 
 static void CheckValueType(footstone::value::HippyValue::Type type) {
-  FOOTSTONE_DCHECK(type == footstone::value::HippyValue::Type::kNumber || type == footstone::value::HippyValue::Type::kObject);
+//  FOOTSTONE_DCHECK(type == footstone::value::HippyValue::Type::kNumber || type == footstone::value::HippyValue::Type::kObject);
 }
 
 static LayoutMeasureMode ToLayoutMeasureMode(MeasureMode measure_mode) {

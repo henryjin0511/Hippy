@@ -60,6 +60,10 @@ Worker::Worker(std::string name, bool is_schedulable, std::unique_ptr<Driver> dr
 }
 
 Worker::~Worker() {
+//  FOOTSTONE_LOG(WARNING) << "thread_.joinable uri = " << this << ", code empty";
+//  if (thread_.joinable()) {
+//    thread_.join();
+//  }
   FOOTSTONE_CHECK(driver_->IsTerminated()) << "Terminate function must be called before destruction";
   Worker::WorkerDestroySpecifics();
 }
