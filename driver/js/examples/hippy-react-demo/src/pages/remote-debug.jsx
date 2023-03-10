@@ -58,10 +58,11 @@ export default function RemoteBundleExample({ instanceId }) {
   const inputBundleURL = useRef(null);
   const openBundle = () => {
     blur();
-    inputBundleURL.current.getValue().then((bundleURL) => {
-      if (!bundleURL) return;
-      callNative('TestModule', 'remoteDebug', instanceId, bundleURL);
-    });
+    console.log(a.a);
+    // inputBundleURL.current.getValue().then((bundleURL) => {
+    //   if (!bundleURL) return;
+    //   callNative('TestModule', 'remoteDebug', instanceId, bundleURL);
+    // });
   };
   const blur = () => {
     inputBundleURL.current.blur();

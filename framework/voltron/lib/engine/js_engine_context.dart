@@ -198,6 +198,7 @@ class EngineContext with RenderContextProxy {
   }
 
   void onRuntimeInitialized(int runtimeId) {
+    LogUtils.dBridge("addEventListener onRuntimeInitialized domId: ${renderContext.domHolder.id}, engineId: $_id, renderManagerId: ${renderContext.renderManager.nativeRenderManagerId}");
     _bridgeManager.bindDomAndRender(
       domInstanceId: renderContext.domHolder.id,
       engineId: _id,

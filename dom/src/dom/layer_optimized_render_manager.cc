@@ -36,10 +36,15 @@ void LayerOptimizedRenderManager::CreateRenderNode(std::weak_ptr<RootNode> root_
                                                    std::vector<std::shared_ptr<DomNode>>&& nodes) {
   std::vector<std::shared_ptr<DomNode>> nodes_to_create;
   for (const auto& node : nodes) {
+    FOOTSTONE_DLOG(INFO) << "AddEventListener start RunCreateDomNode id:" << node->GetId() << " pid:" << node->GetPid();
     node->SetLayoutOnly(ComputeLayoutOnly(node));
+    FOOTSTONE_DLOG(INFO) << "AddEventListener ComputeLayoutOnly RunCreateDomNode id" << node->GetId() << "layoutOnly" << node->IsLayoutOnly();
     if (!CanBeEliminated(node)) {
       UpdateRenderInfo(node);
+      FOOTSTONE_DLOG(INFO) << "AddEventListener UpdateRenderInfo id: " << node->GetId() << " pid: " << node->GetPid();
       nodes_to_create.push_back(node);
+    } else {
+      FOOTSTONE_DLOG(INFO) << "AddEventListener CanBeEliminated id: " << node->GetId() << ", node address: " << node;
     }
   }
 
@@ -158,6 +163,9 @@ void LayerOptimizedRenderManager::CallFunction(std::weak_ptr<RootNode> root_node
 }
 
 bool LayerOptimizedRenderManager::ComputeLayoutOnly(const std::shared_ptr<DomNode>& node) const {
+//  FOOTSTONE_LOG(INFO) << "AddEventListener node->GetViewName() == kTagNameView" << node->GetViewName() << std::endl;
+  FOOTSTONE_LOG(INFO) << "AddEventListener node->HasEventListeners(): " << node->HasEventListeners() << ", address: " << node << std::endl;
+//  FOOTSTONE_LOG(INFO) << "AddEventListener CheckStyleJustLayout(node)" << CheckStyleJustLayout(node) << std::endl;
   return node->GetViewName() == kTagNameView
          && CheckStyleJustLayout(node)
          && !node->HasEventListeners();
@@ -168,8 +176,8 @@ bool LayerOptimizedRenderManager::CheckStyleJustLayout(const std::shared_ptr<Dom
   for (const auto &entry : *style_map) {
     const auto &key = entry.first;
     const auto &value = entry.second;
-
     if (IsJustLayoutProp(key.c_str())) {
+      FOOTSTONE_LOG(INFO) << "entry.first" << entry.first.c_str() << "IsJustLayoutProp" << true << std::endl;
       continue;
     }
 
@@ -188,6 +196,7 @@ bool LayerOptimizedRenderManager::CheckStyleJustLayout(const std::shared_ptr<Dom
       if (border_width != style_map->end() &&
           (*border_width).second->IsNumber() &&
           (*border_width).second->ToDoubleChecked() != 0) {
+        FOOTSTONE_LOG(INFO) << "CheckStyleJustLayout false entry.first" << entry.first.c_str() << "IsJustLayoutProp" << true << std::endl;
         return false;
       }
     } else if (key == kBorderLeftColor) {
@@ -229,6 +238,7 @@ bool LayerOptimizedRenderManager::CheckStyleJustLayout(const std::shared_ptr<Dom
     }
     return false;
   }
+  FOOTSTONE_LOG(INFO) << "CheckStyleJustLayout true" << node->GetId() << " pid" << node->GetPid();
   return true;
 }
 

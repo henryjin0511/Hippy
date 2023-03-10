@@ -58,6 +58,8 @@ class _MyAppState extends State<MyApp> {
         isHome: true,
         coreBundle: "assets/jsbundle/vendor.android.js",
         indexBundle: "assets/jsbundle/index.android.js",
+        // coreBundle: "assets/jsbundle2/vendor.android.js",
+        // indexBundle: "assets/jsbundle2/index.android.js",
       ),
     );
   }

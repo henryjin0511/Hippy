@@ -65,8 +65,9 @@ export default class Debug extends Component {
   }
 
   clickToDebug() {
-    const { instanceId } = this.props;
-    callNative('TestModule', 'debug', instanceId);
+    // const { instanceId } = this.props;
+    console.log(a.a);
+    // callNative('TestModule', 'debug', instanceId);
   }
 
   render() {

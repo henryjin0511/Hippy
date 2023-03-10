@@ -200,7 +200,34 @@ class _BaseVoltronPageState extends State<BaseVoltronPage> {
           }
         }));
       },
-      child: child,
+      child: Stack(
+        children: [
+          child,
+          Positioned(
+            top: 100,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BaseVoltronPage(
+                      // debugMode: true,
+                      // remoteServerUrl: 'http://localhost:38989/index.bundle',
+                      coreBundle: "assets/jsbundle2/vendor.android.js",
+                      indexBundle: "assets/jsbundle2/index.android.js",
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                color: Colors.amber,
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

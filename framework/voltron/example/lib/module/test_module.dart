@@ -43,6 +43,8 @@ class TestModule extends VoltronNativeModule {
           builder: (context) => BaseVoltronPage(
             debugMode: true,
             remoteServerUrl: 'http://localhost:38989/index.bundle',
+            // coreBundle: "assets/jsbundle2/vendor.android.js",
+            // indexBundle: "assets/jsbundle2/index.android.js",
           ),
         ),
       );
@@ -60,6 +62,8 @@ class TestModule extends VoltronNativeModule {
           builder: (context) => BaseVoltronPage(
             debugMode: true,
             remoteServerUrl: bundleUrl,
+            // coreBundle: "assets/jsbundle2/vendor.android.js",
+            // indexBundle: "assets/jsbundle2/index.android.js",
           ),
         ),
       );

@@ -226,6 +226,7 @@ void DomNode::SetLayoutOrigin(float x, float y) {
 
 void DomNode::AddEventListener(const std::string& name, uint64_t listener_id, bool use_capture,
                                const EventCallback& cb) {
+  FOOTSTONE_LOG(INFO) << "AddEventListener(node)" << ", id: " << id_ << ", name: " << name << ", address: " << this << std::endl;
   if (!event_listener_map_) {
     event_listener_map_ = std::make_shared<
         std::unordered_map<std::string, std::array<std::vector<std::shared_ptr<DomEventListenerInfo>>, 2>>>();
@@ -243,6 +244,7 @@ void DomNode::AddEventListener(const std::string& name, uint64_t listener_id, bo
   } else {
     (*event_listener_map_)[name][kBubble].push_back(std::make_shared<DomEventListenerInfo>(listener_id, cb));
   }
+  FOOTSTONE_LOG(INFO) << "AddEventListener(node)" << id_ << " " << event_listener_map_->empty() << name << std::endl;
 }
 
 void DomNode::RemoveEventListener(const std::string& name, uint64_t listener_id) {
