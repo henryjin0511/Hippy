@@ -441,6 +441,9 @@ class VoltronApi {
     int devtoolsId,
     bool isReload,
   ) async {
+    LogUtils.dBridge(
+      "inspect id - destroyDevtools devtoolsId: ${devtoolsId}",
+    );
     _BridgeFFIManager.instance.destroyDevtools(
       devtoolsId,
       isReload ? 1 : 0,

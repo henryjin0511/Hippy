@@ -102,6 +102,7 @@ class VoltronBridgeManager implements Destroyable {
         dataDir: tracingDataDir,
         wsUrl: _context.devSupportManager.createDebugUrl(_debugServerHost),
       );
+      LogUtils.dBridge("inspect id - devtoolsManager create, devtoolsId: ${devtoolsId}");
       final networkModule = _context.moduleManager.nativeModule[NetworkModule.kNetworkModuleName];
       if (networkModule is NetworkModule) {
         networkModule.requestWillBeSentHook = NetworkInspector().onRequestWillBeSent;
@@ -116,6 +117,9 @@ class VoltronBridgeManager implements Destroyable {
     required int engineId,
     required int renderManagerId,
   }) {
+    LogUtils.dBridge(
+      "inspect id - bindDomAndRender engineId: $engineId, renderManagerId: $renderManagerId, domInstanceId:$domInstanceId",
+    );
     VoltronApi.bindDomAndRender(
       domInstanceId,
       engineId,
@@ -127,6 +131,9 @@ class VoltronBridgeManager implements Destroyable {
     int engineId,
     int rootId,
   ) {
+    LogUtils.dBridge(
+      "inspect id - connectRootViewAndRuntime engineId: $engineId, rootId: $rootId",
+    );
     VoltronApi.connectRootViewAndRuntime(
       engineId,
       rootId,
@@ -308,6 +315,9 @@ class VoltronBridgeManager implements Destroyable {
 
   Future<dynamic> destroyBridge(DestoryBridgeCallback<bool> callback, bool isReload) async {
     _thirdPartyAdapter?.onRuntimeDestroy();
+    LogUtils.dBridge(
+      "inspect id - destroyBridge _engineId: ${_engineId}",
+    );
     await VoltronApi.destroy(
       _engineId,
       (value) {
@@ -423,8 +433,8 @@ class VoltronBridgeManager implements Destroyable {
     }
   }
 
-  Future<bool> runScriptFromUri(String uri, bool canUseCodeCache,
-      String codeCacheTag, CommonCallback callback) async {
+  Future<bool> runScriptFromUri(
+      String uri, bool canUseCodeCache, String codeCacheTag, CommonCallback callback) async {
     if (!_isFrameWorkInit) {
       return false;
     }
@@ -434,7 +444,8 @@ class VoltronBridgeManager implements Destroyable {
       var codeCacheDir = sCodeCacheRootDir! + codeCacheTag + Platform.pathSeparator;
 
       await VoltronApi.runScriptFromUri(
-          _engineId, _context.vfsManager.id, uri, codeCacheDir, canUseCodeCache, isAssetsUrl(uri), (value) {
+          _engineId, _context.vfsManager.id, uri, codeCacheDir, canUseCodeCache, isAssetsUrl(uri),
+          (value) {
         callback(value);
       });
     } else {

@@ -123,6 +123,9 @@ class VoltronRenderApi {
   }
 
   static Future destroyNativeRender(int nativeRenderId) async {
+    LogUtils.dBridge(
+      "inspect id - destroyNativeRender nativeRenderId: ${nativeRenderId}",
+    );
     _RenderBridgeFFIManager.instance.destroyNativeRender(nativeRenderId);
   }
 

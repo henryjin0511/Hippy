@@ -136,6 +136,8 @@ class VoltronJSEngine implements OnResumeAndPauseListener, DevServerCallback {
 
     _id = VoltronApi.getVoltronEngineIndex();
 
+    LogUtils.dBridge("inspect id - create VoltronJSEngine, engineId: $_id");
+
     CookieManager.getInstance().setCookieDelegate(
       params.cookieDelegateType,
       originDelegate: params.originDelegate,
@@ -344,7 +346,7 @@ class VoltronJSEngine implements OnResumeAndPauseListener, DevServerCallback {
       rootWidgetViewModel,
     );
     LogUtils.dBridge(
-      "loadJSInstance engineId: ${_engineContext?.engineId ?? 0}, rootWidgetViewModel.id: ${rootWidgetViewModel.id}",
+      "inspect id - loadJSInstance engineId: ${_engineContext?.engineId ?? 0}, rootWidgetViewModel.id: ${rootWidgetViewModel.id}",
     );
     _engineContext?.bridgeManager
         .connectRootViewAndRuntime(_engineContext?.engineId ?? 0, rootWidgetViewModel.id);
@@ -482,8 +484,10 @@ class VoltronJSEngine implements OnResumeAndPauseListener, DevServerCallback {
     }
     rootWidget.onResumeAndPauseListener = null;
     _devSupportManager.detachFromHost(rootWidget);
-
     _engineContext?.bridgeManager.unloadInstance(rootWidget.id);
+    LogUtils.dBridge(
+      "inspect id - unloadInstance rootWidget.id: ${rootWidget.id}",
+    );
     var listeners = engineContext?.instanceLifecycleEventListener;
     listeners?.forEach((element) {
       element.onInstanceDestroy(rootWidget.id);

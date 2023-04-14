@@ -191,6 +191,7 @@ EXTERN_C const char* GetCrashMessageFFI() { return "lucas_crash_report_test"; }
 
 EXTERN_C void DestroyFFI(int32_t engine_id, int32_t callback_id, int32_t is_reload) {
   auto bridge_manager = BridgeManager::Find(engine_id);
+  FOOTSTONE_DLOG(INFO) << "inspect id - DestroyFFI engine_id invalid " << engine_id;
   if (!bridge_manager) {
     FOOTSTONE_DLOG(WARNING) << "DestroyFFI engine_id invalid";
     return;

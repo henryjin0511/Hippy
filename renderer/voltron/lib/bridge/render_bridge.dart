@@ -60,6 +60,9 @@ class VoltronRenderBridgeManager implements Destroyable {
   }
 
   void destroyDomInstance(int domInstanceId) {
+    LogUtils.dBridge(
+      "inspect id - destroyDomInstance domInstanceId: ${domInstanceId}",
+    );
     VoltronRenderApi.destroyDomInstance(domInstanceId);
   }
 

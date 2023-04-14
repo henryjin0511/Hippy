@@ -90,11 +90,11 @@ abstract class RenderContext<T extends LoadInstanceContext> with RenderContextPr
     /// step 3, make sure dom holder is valid, use old value when reload
     if (debugMode && initDomHolder != null) {
       _domHolder = initDomHolder;
-      LogUtils.dBridge('reuse dom manager id:${_domHolder.id}');
+      LogUtils.dBridge('inspect id - reuse dom manager id:${_domHolder.id}');
     } else {
       var domInstanceId = _renderBridgeManager.createDomInstance();
       _domHolder = DomHolder(domInstanceId);
-      LogUtils.dBridge('create dom manager id:$domInstanceId');
+      LogUtils.dBridge('inspect id - create dom manager id:$domInstanceId');
     }
 
     /// don't forget to bind current renderContext
@@ -102,6 +102,7 @@ abstract class RenderContext<T extends LoadInstanceContext> with RenderContextPr
 
     /// step 4, create renderManager and virtualNodeManager
     _renderManager = RenderManager(this, generators);
+    LogUtils.dBridge('inspect id - create native render manager, id:${_renderManager.nativeRenderManagerId}');
     _virtualNodeManager = VirtualNodeManager(this);
 
     /// step 5, is reload, add all old rootViewModel
