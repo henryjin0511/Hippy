@@ -43,13 +43,14 @@ class WebViewWidgetState extends FRState<WebViewViewWidget> {
   @override
   void initState() {
     super.initState();
+    // Enable virtual display.
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
   }
 
   @override
   Widget build(BuildContext context) {
     LogUtils.dWidget(
-      "ID:${widget._viewModel.id}, node:${widget._viewModel.idDesc}, build web view widget",
-    );
+        "ID:${widget._viewModel.id}, node:${widget._viewModel.idDesc}, build web view widget");
     return ChangeNotifierProvider.value(
       value: widget._viewModel,
       child: Selector<WebViewViewModel, WebViewViewModel>(
@@ -74,10 +75,18 @@ class WebViewWidgetState extends FRState<WebViewViewWidget> {
 
   Widget _webWidget(WebViewViewModel viewModel) {
     LogUtils.dWidget(
-      "ID:${widget._viewModel.id}, node:${widget._viewModel.idDesc}, build web view inner widget",
-    );
-    return WebViewWidget(
-      controller: widget._viewModel.controller,
+        "ID:${widget._viewModel.id}, node:${widget._viewModel.idDesc}, build web view inner widget");
+    return WebView(
+      initialUrl: viewModel.src,
+      userAgent: viewModel.userAgent,
+      javascriptMode: JavascriptMode.unrestricted,
+      onPageStarted: viewModel.onLoadStart,
+      onProgress: (progress) {},
+      onPageFinished: (url) {
+        viewModel.onLoad(url);
+        viewModel.onLoadEnd(url, true, "");
+      },
+      onWebResourceError: viewModel.onLoadError,
     );
   }
 }
