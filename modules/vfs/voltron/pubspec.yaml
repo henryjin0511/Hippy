@@ -33,6 +33,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  ffi: ^2.0.0
+  ffi: ^1.0.0
   voltron_ffi:
     path: ../../../modules/voltron/ffi

@@ -45,7 +45,7 @@ dependencies:
   webview_flutter: ^3.0.2
   waterfall_flow: ^3.0.2
   charset: ^1.1.0
-  ffi: ^2.0.0
+  ffi: ^1.0.0
   voltron_ffi:
     path: ../../modules/voltron/ffi
 
