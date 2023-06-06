@@ -37,6 +37,7 @@ void main() {
   }
   runApp(MyApp());
 }
+
 class _MyWidgetInspector with WidgetInspectorService {
   static void init() {
     WidgetInspectorService.instance = _MyWidgetInspector();
