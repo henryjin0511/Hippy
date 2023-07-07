@@ -1,3 +1,7 @@
+## 0.0.30
+
+- fix android scope not erase when destroy
+
 ## 0.0.29
 
 - add debug dialog for js error
