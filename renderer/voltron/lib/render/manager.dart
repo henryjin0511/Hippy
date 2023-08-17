@@ -287,10 +287,10 @@ class RenderManager
   ) {
     var uiNode = controllerManager.findNode(instanceId, id);
     LogUtils.dLayout(
-      "ID:$id, updateLayout, x:$x, y:$y, w:$w, h:$h",
+      "ID:$id, updateLayout, x:$x, y:$y, w:${w.roundToDouble()}, h:${h.roundToDouble()}",
     );
     if (uiNode != null) {
-      uiNode.updateLayout(x, y, w, h);
+      uiNode.updateLayout(x, y, w.roundToDouble(), h.roundToDouble());
       addUpdateNodeIfNeeded(uiNode);
     }
   }

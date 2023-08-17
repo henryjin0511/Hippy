@@ -31,20 +31,41 @@ const navStyles = StyleSheet.create({
     height: NAV_HEIGHT - 1,
   },
   navItem: {
-    width: NAV_WIDTH,
+    // marginRight: 20,
+    // width: NAV_WIDTH,
     height: NAV_HEIGHT - 1,
     paddingTop: 13,
+
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  navItemInner: {
+    marginRight: 20,
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  navItemInnerContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 25,
   },
   navItemText: {
     fontSize: 16,
     lineHeight: 17,
     textAlign: 'center',
     backgroundColor: '#ffffff',
+    fontWeight: 400,
+    fontFamily: 'PingFang SC'
   },
   navItemTextNormal: {
     color: '#666666',
   },
   navItemTextBlue: {
+    fontSize: 18,
+    fontWeight: 500,
     color: '#2D73FF',
   },
 });
@@ -55,7 +76,7 @@ export default class TabHostExample extends React.Component {
     super(props);
     this.state = {
       curIndex: 0,
-      navList: ['头条', '推荐', '圈子', 'NBA', '中超', '英超', '西甲', 'CBA', '澳网', '电影', '本地', '娱乐', '小说', '生活', '直播', '游戏'],
+      navList: ['市场', '基金', '圈子', 'NBA', '中超', '英超', '西甲', 'CBA', '澳网', '电影', '本地', '娱乐', '小说', '生活', '直播', '游戏'],
     };
     this.navScrollView = null;
     this.viewPager = null;
@@ -139,15 +160,19 @@ export default class TabHostExample extends React.Component {
                 activeOpacity={0.5}
                 onClick={() => this.pressNavItem(idx)}
               >
-                <Text
-                  style={[
-                    navStyles.navItemText,
-                    curIndex === idx ? navStyles.navItemTextBlue : navStyles.navItemTextNormal,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {v}
-                </Text>
+                <View style={navStyles.navItemInner}>
+                  <View style={navStyles.navItemInnerContainer}>
+                    <Text
+                      style={[
+                        navStyles.navItemText,
+                        curIndex === idx ? navStyles.navItemTextBlue : navStyles.navItemTextNormal,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      ssssssss看{v}
+                    </Text>
+                  </View>
+                </View>
               </View>
             ))
           }
