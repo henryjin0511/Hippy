@@ -403,16 +403,17 @@
     if (!self.needsLayoutItems) {
         return;
     }
+    
+    NSUInteger viewPagerItemsCount = self.viewPagerItems.count;
     self.needsLayoutItems = NO;
-    if (!self.viewPagerItems.count) {
+    if (viewPagerItemsCount <= 0) {
         return;
     }
-    for (int i = 0; i < self.viewPagerItems.count; i++) {
+    for (int i = 0; i < viewPagerItemsCount; i++) {
         UIView *item = [self.viewPagerItems objectAtIndex:i];
         item.frame = [self frameForItemAtIndex:i];
     }
-
-    if (self.initialPage >= self.viewPagerItems.count) {
+    if (self.initialPage >= viewPagerItemsCount) {
         HPLogWarn(@"Error In NativeRenderViewPager: layoutSubviews");
         self.contentSize = CGSizeZero;
         return;
@@ -425,10 +426,8 @@
         return;
     }
 
-    self.contentSize = CGSizeMake(
-                                  lastViewPagerItem.frame.origin.x + lastViewPagerItem.frame.size.width,
-                                  lastViewPagerItem.frame.origin.y + lastViewPagerItem.frame.size.height
-                                  );
+    self.contentSize = CGSizeMake(viewPagerItemsCount * lastViewPagerItem.frame.size.width,
+                                  lastViewPagerItem.frame.size.height);
     if (!_didFirstTimeLayout) {
         [self setPage:self.initialPage animated:NO];
         _didFirstTimeLayout = YES;
