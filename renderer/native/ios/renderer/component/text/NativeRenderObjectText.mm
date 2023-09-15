@@ -254,8 +254,8 @@ static void resetFontAttribute(NSTextStorage *textStorage) {
                 
                 // take margin into account
                 // FIXME: margin currently not working, may have some bug in layout process
-                float left = child.nodeLayoutResult.left;
-                float top = child.nodeLayoutResult.top;
+                // float left = child.nodeLayoutResult.left;
+                // float top = child.nodeLayoutResult.top;
                 float marginV = child.nodeLayoutResult.marginTop + child.nodeLayoutResult.marginBottom;
                 CGFloat roundedHeightWithMargin = NativeRenderRoundPixelValue(height + marginV);
                 
@@ -288,8 +288,8 @@ static void resetFontAttribute(NSTextStorage *textStorage) {
                         break;
                 }
                 
-                CGRect childFrameToSet = CGRectMake(textFrame.origin.x + location.x + left,
-                                                    textFrame.origin.y + positionY + top,
+                CGRect childFrameToSet = CGRectMake(textFrame.origin.x + location.x, // + left
+                                                    textFrame.origin.y + positionY, // + top
                                                     roundedWidth, roundedHeight);
                 CGRect childFrame = child.frame;
                 if (!NativeRenderCGRectNearlyEqual(childFrame, childFrameToSet)) {
