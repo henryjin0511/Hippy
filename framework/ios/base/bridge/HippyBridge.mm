@@ -1000,25 +1000,3 @@ void HippyBridgeHandleException(NSException *exception, HippyBridge *bridge) {
     HPHandleException(exception, bridge?@{@"bridge": bridge}:nil);
 }
 
-
-#pragma mark -
-
-@implementation HippyBridge (RedBoxDebug)
-
-static HippyBridge *HippyCurrentBridgeInstance = nil;
-
-/**
- * The last current active bridge instance. This is set automatically whenever
- * the bridge is accessed. It can be useful for static functions or singletons
- * that need to access the bridge for purposes such as logging, but should not
- * be relied upon to return any particular instance, due to race conditions.
- */
-+ (instancetype)currentBridge {
-    return HippyCurrentBridgeInstance;
-}
-
-+ (void)setCurrentBridge:(nullable HippyBridge *)currentBridge {
-    HippyCurrentBridgeInstance = currentBridge;
-}
-
-@end

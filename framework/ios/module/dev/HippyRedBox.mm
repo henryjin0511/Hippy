@@ -30,7 +30,7 @@
 #import "HPDriverStackFrame.h"
 #import "HPLog.h"
 #import "HPToolUtils.h"
-
+#import "HippyWeakProxy.h"
 #import "MacroDefines.h"
 
 #if HP_DEBUG
@@ -428,10 +428,28 @@ openStackFrameInEditor:(HPDriverStackFrame *)stackFrame {
 
 @end
 
+#pragma mark -
+
 @implementation HippyBridge (HippyRedBox)
 
 - (HippyRedBox *)redBox {
     return [self moduleForClass:[HippyRedBox class]];
+}
+
+static HippyWeakProxy *HippyCurrentBridgeInstance = nil;
+
+/**
+ * The last current active bridge instance. This is set automatically whenever
+ * the bridge is accessed. It can be useful for static functions or singletons
+ * that need to access the bridge for purposes such as logging, but should not
+ * be relied upon to return any particular instance, due to race conditions.
+ */
++ (instancetype)currentBridge {
+    return (id)HippyCurrentBridgeInstance;
+}
+
++ (void)setCurrentBridge:(nullable HippyBridge *)currentBridge {
+    HippyCurrentBridgeInstance = [HippyWeakProxy weakProxyForObject:currentBridge];
 }
 
 @end
@@ -469,6 +487,12 @@ openStackFrameInEditor:(HPDriverStackFrame *)stackFrame {
 - (HippyRedBox *)redBox {
     return nil;
 }
+
++ (instancetype)currentBridge {
+    return nil;
+}
+
++ (void)setCurrentBridge:(nullable HippyBridge *)currentBridge {}
 
 @end
 
