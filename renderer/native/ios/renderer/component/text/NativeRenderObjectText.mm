@@ -238,7 +238,7 @@ static void resetFontAttribute(NSTextStorage *textStorage) {
         [textStorage enumerateAttribute:NativeRenderRenderObjectAttributeName inRange:characterRange options:0 usingBlock:^(
             NativeRenderObjectView *child, NSRange range, __unused BOOL *_) {
             if (child) {
-                float width = child.frame.size.width, height = child.frame.size.height;
+                float width = child.width, height = child.height;
                 if (isnan(width) || isnan(height)) {
                     HPLogError(@"Views nested within a <Text> must have a width and height");
                 }
