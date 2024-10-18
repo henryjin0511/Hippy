@@ -1,105 +1,64 @@
+import { Image, StyleSheet, Text, View, Dimensions } from '@hippy/react';
 import React from 'react';
-import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-} from '@hippy/react';
 
-import imageUrl from './defaultSource.jpg';
+// import { CHEVRON_RIGHT, COIN_MIDDLE_ICON } from '@/assets';
+// import { Colors, FontSize, STYLES, UNITS } from '@/helper';
 
-const styles = StyleSheet.create({
-  itemTitle: {
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    height: 40,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#e0e0e0',
-    borderRadius: 2,
-    backgroundColor: '#fafafa',
-    padding: 10,
-    marginTop: 10,
-  },
-  rectangle: {
-    width: 160,
-    height: 80,
-    marginVertical: 10,
-  },
-  bigRectangle: {
-    width: 200,
-    height: 100,
-    borderColor: '#eee',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    padding: 10,
-    marginVertical: 10,
-  },
-  smallRectangle: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-  },
-});
+const windowSize = Dimensions.get('window');
 
-export default function ViewExpo() {
-  const renderTitle = title => (
-    <View style={styles.itemTitle}>
-      <Text>{title}</Text>
+export default function ViewExpo({
+  pointBalance = 0,
+}) {
+  return (
+    <View
+      style={styles.headerContent}
+    >
+      <Image source={{ uri: 'http://placehold.it/100' }} style={styles.pointIcon} />
+      <Text style={styles.pointNumber}>{pointBalance}</Text>
+      <View
+        style={styles.pointAction}
+      >
+        <Text style={styles.pointActionText}>兑换记录</Text>
+        <Image source={{ uri: 'http://placehold.it/100' }} style={styles.pointActionIcon} />
+      </View>
     </View>
   );
-  return (
-    <ScrollView style={{ paddingHorizontal: 10 }}>
-      {renderTitle('backgroundColor')}
-      <View style={[styles.rectangle, { backgroundColor: '#4c9afa' }]} />
-      {renderTitle('backgroundImage')}
-      <View style={[styles.rectangle, {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 20,
-        backgroundImage: imageUrl,
-      }]}
-      accessible={true}
-      accessibilityLabel={'背景图'}
-      accessibilityRole={'image'}
-      accessibilityState={{
-        disabled: false,
-        selected: true,
-        checked: false,
-        expanded: false,
-        busy: true,
-      }}
-      accessibilityValue={{
-        min: 1,
-        max: 10,
-        now: 5,
-        text: 'middle',
-      }}
-    ><Text style={{ color: 'white' }}>背景图</Text></View>
-      {renderTitle('backgroundImage linear-gradient')}
-      <View style={[styles.rectangle, {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 20,
-        borderWidth: 2,
-        borderStyle: 'solid',
-        borderColor: 'black',
-        borderRadius: 2,
-        backgroundImage: 'linear-gradient(30deg, blue 10%, yellow 40%, red 50%);',
-      }]} ><Text style={{ color: 'white' }}>渐变色</Text></View>
-      {renderTitle('border props')}
-      <View style={[styles.rectangle, { borderColor: '#242424', borderRadius: 4, borderWidth: 1, borderStyle: 'solid' }]} />
-      {renderTitle('flex props')}
-      <View style={[styles.bigRectangle, {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }]}
-      >
-        <View style={[styles.smallRectangle, { backgroundColor: 'yellow' }]} />
-        <View style={[styles.smallRectangle, { backgroundColor: 'blue' }]} />
-        <View style={[styles.smallRectangle, { backgroundColor: 'green' }]} />
-      </View>
-    </ScrollView>
-  );
-}
+};
+
+const styles = StyleSheet.create({
+  headerContent: {
+    marginTop: 18,
+    height: 60,
+    paddingHorizontal: 16,
+    width: windowSize.width - 36,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    // ...STYLES.shadowMain(10),
+  },
+  pointIcon: {
+    width: 24,
+    height: 24,
+  },
+  pointNumber: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    lineHeight: 19.0,
+    // ...STYLES.fontMain(FontSize.Xxl, 'bold'),
+    // ...STYLES.notoSans,
+    marginLeft: 6,
+  },
+  pointAction: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+  },
+  pointActionText: {
+    // ...STYLES.fontLight(FontSize.Md),
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+  },
+  pointActionIcon: {
+    width: 16,
+    height: 16,
+    marginLeft: 2,
+  },
+});

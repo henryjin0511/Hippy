@@ -200,7 +200,7 @@ class VoltronRenderBridgeManager implements Destroyable {
     FlexLayoutParams layoutParams,
   ) {
     LogUtils.dBridge(
-      'ID:$nodeId, call calculate node layout, page:$instanceId, parent layout:$layoutParams',
+      'ID:$nodeId, call calculate node layout start, page:$instanceId, parent layout:$layoutParams',
     );
     if (_isBridgeInit) {
       return _renderContext.virtualNodeManager.measure(

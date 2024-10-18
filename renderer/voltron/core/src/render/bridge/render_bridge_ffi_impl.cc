@@ -48,6 +48,7 @@ EXTERN_C const char *KeepRenderLibStr() {
 }
 
 EXTERN_C uint32_t CreateVoltronRenderProvider(double density) {
+  FOOTSTONE_DLOG(INFO) << "CreateVoltronRenderProvider density: " << density;
   auto render_manager = voltron::BridgeManager::CreateRenderManager();
   render_manager->SetDensity((float)density);
   if (render_manager) {

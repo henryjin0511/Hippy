@@ -426,6 +426,7 @@ void VoltronRenderTaskRunner::SetNodeCustomMeasure(uint32_t root_id,
                     0xFFFFFFFF & measure_result);
                 float w_dp = self->PxToDp((float) w_bits);
                 float h_dp = self->PxToDp((float) h_bits);
+                FOOTSTONE_DLOG(INFO) << "LayoutSize node_id: " << node_id << "w_px: " << w_bits <<  " w_dp: " << w_dp << "h_px" << h_bits <<  " h_dp: " << h_dp;
                 return VoltronRenderTaskRunner::LayoutSize{w_dp, h_dp};
               }
             }

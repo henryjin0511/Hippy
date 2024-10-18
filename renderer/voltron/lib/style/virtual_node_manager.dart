@@ -165,14 +165,12 @@ class VirtualNodeManager {
     );
   }
 
-  VirtualNode? createVirtualNode(
-    int rootId,
-    int id,
-    int pid,
-    int index,
-    String className,
-    VoltronMap props,
-  ) {
+  VirtualNode? createVirtualNode(int rootId,
+      int id,
+      int pid,
+      int index,
+      String className,
+      VoltronMap props,) {
     VirtualNode? node = context.renderManager.createVirtualNode(
       id,
       pid,
@@ -299,7 +297,9 @@ class VirtualNodeManager {
 
   // 这里传输的时候传输物理像素，因为taitank计算小数点的时候会按照物理像素计算，所以传过去px，让taitank内部计算
   double dpToPx(double len) {
-    var density = ScreenUtil.getInstance().scale;
+    var density = ScreenUtil
+        .getInstance()
+        .scale;
     // 兼容测试用例
     density = density <= 0 ? 1.0 : density;
     return (len * density).ceilToDouble();
@@ -328,10 +328,12 @@ class VirtualNodeManager {
         layoutParams.height,
       );
     } else {
+      var pxWidth = dpToPx(painter.width);
+      var pxHeight = dpToPx(painter.height);
       LogUtils.dRenderNode(
-        'ID:$nodeId, calculate layout success, width:${painter.width}, height:${painter.height}',
+        'ID:$nodeId, calculate layout success, width:${painter.width}, pxWidth:${pxWidth}, height: ${painter.height}, pxHeight:${pxHeight}',
       );
-      return FlexOutput.makeMeasureResult(dpToPx(painter.width), dpToPx(painter.height));
+      return FlexOutput.makeMeasureResult(pxWidth, pxHeight);
     }
   }
 
