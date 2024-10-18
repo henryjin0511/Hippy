@@ -61,7 +61,10 @@ dependencies:
   uuid: ^3.0.6
   ffi: ^2.0.0
   voltron_renderer:
-    path: ../../renderer/voltron
+    git:
+      url: "https://github.com/henryjin0511/Hippy"
+      path: renderer/voltron
+      ref: "fix/ehe"
   voltron_vfs: 0.0.7
   voltron_ffi: 0.0.6
 
